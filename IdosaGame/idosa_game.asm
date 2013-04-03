@@ -1,21 +1,21 @@
 #################################################################################################
 #
 # NOME DO PROGRAMA: JOGO DA IDOSA
-# AUTORES: CRISTIANO SANTANA, JESILENE GODOY E LUIS MIRANDA
+# AUTORES: ALINE FIGUEIREDO, CRISTIANO SANTANA, JESILENE GODOY E LUIS MIRANDA
 #
 # UM TIPICO JOGO DA VELHA, DESENVOLVIDO EM MARS PARA MIPS
 #
-# UNIVERSIDADE FEDERAL DE SÃO CARLOS
+# UNIVERSIDADE FEDERAL DE SÃƒO CARLOS
 # ARQUITETURA DE COMPUTADORES
 #
-# AGRADECIMENTOS: Ao prezado Jerrekedb, um Belga que ao divulgar seu confuso código permitiu que 
-# nós aprendêssemos a usar o BitMapDisplay.
+# AGRADECIMENTOS: Ao prezado Jerrekedb, um Belga que ao divulgar seu confuso cÃ³digo permitiu que 
+# nÃ³s aprendÃªssemos a usar o BitMapDisplay.
 # http://www.cppgameprogramming.com/newforums/viewtopic.php?f=7&t=1920
 #
 # -----------------------------------------------------
-#  jogo da Idosa!                                      
-#  ---------------------------->UFSCar BSI.g5 - AC ----
+#  jogo da Idosa!-------------->UFSCar BSI.g5 - AC ----                                      
 #  ----------------------------------------------------
+#  --------------------------------aline figueiredo ---
 #     |     |      ---------------- cristiano santana -
 #  1  |  2  | 3     ---------------- jesilene godoy ---
 # ----|-----|----     ---------------- luis miranda ---
@@ -27,7 +27,7 @@
 #
 #################################################################################################
 .data
-#inicialização do bitmap
+#inicializaÃ§Ã£o do bitmap
 bitmap_address:   .space 0x8000
 
 #posicao no bitmap
@@ -43,9 +43,9 @@ pos_9:	.word 10920
 
 # menu para jogar
 msg0:    .asciiz " -----------------------------------------------------\n"
-msg1:    .asciiz "  jogo da Idosa!                                      \n"
-msg2:    .asciiz "  ---------------------------->UFSCar BSI.g5 - AC ----\n"
-msg3:    .asciiz "  ----------------------------------------------------\n"
+msg1:    .asciiz "  jogo da Idosa!-------------->UFSCar BSI.g5 - AC ----\n"
+msg2:    .asciiz "  ----------------------------------------------------\n"
+msg3:    .asciiz "  --------------------------------aline figueiredo ---\n"
 msg4:    .asciiz "     |     |      ---------------- cristiano santana -\n"
 msg5:    .asciiz "  1  |  2  | 3     ---------------- jesilene godoy ---\n"
 msg6:    .asciiz " ----|-----|----     ---------------- luis miranda ---\n"
@@ -64,7 +64,7 @@ blue:      	.word 0x8888ff
 
 .text
 #monta jogo da velha
-#como foi elaborado quando estávamos aprendendo a desenhar no BitmapDisplay foi feito linha
+#como foi elaborado quando estÃ¡vamos aprendendo a desenhar no BitmapDisplay foi feito linha
 #por linha sem a criacao de subrotinas
 
 	li $t2, 0x1500# 16384 posicao da primeira linha
@@ -111,7 +111,7 @@ fim_c:
 # ----|-----|----
 #     |     |  
 #     |     |
-#           \--> Esta é a segunda linha vertical
+#           \--> Esta Ã© a segunda linha vertical
 #
 
 
@@ -234,7 +234,7 @@ pulo_oa:
 	sw 	$a2, bitmap_address($t5)
 	addi 	$t5, $t5, 4 
 	sw 	$a2, bitmap_address($t5)	
-	#depois acrescento o espaçamento que cresce dentor da bola
+	#depois acrescento o espaÃ§amento que cresce dentor da bola
 	add	$t5,$t5,$t4
 	add	$t5,$t5,$t4
 	#enfim desenho os dois pontos depois do espacamento
@@ -264,7 +264,7 @@ pulo_ob:
 	sw 	$a2, bitmap_address($t5)
 	addi 	$t5, $t5, 4 
 	sw 	$a2, bitmap_address($t5)	
-	#acrescento o espaçamento que cresce dentor do 0
+	#acrescento o espaÃ§amento que cresce dentor do 0
 	add	$t5,$t5,$t4
 	add	$t5,$t5,$t4
 	#desenho os ponots depois do espacamento
