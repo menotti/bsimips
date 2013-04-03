@@ -1,0 +1,8 @@
+Oi pessoal!
+
+Precisamos criar um algorítmo antes de começar implementar propriamente o código.
+
+No código que eu compartilhei tem apenas o fruto de um estudo que fiz para desenhar no BitMapDisplay.
+
+Att
+Cris
