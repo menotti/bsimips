@@ -1,0 +1,6 @@
+Grupo:
+	Adriano
+	Alessandro
+	Eurico
+
+Projeto: Jogo da Forca
