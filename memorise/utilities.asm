@@ -10,21 +10,20 @@
 		syscall
 .end_macro
 
-# Procedimento para a impressão da sequência de números informada como argumento.
-.macro print_numbers($sequence, $size)
-	la $t0, $sequence # carrega o primeiro endereço da sequência de números 
-	lw $t1, $size # contador do loop.
-
-	loop_print_numbers:
-		lw $a0, 0 ($t0) # carrega o número atual.
-		li $v0, 1
-		syscall
-		print_string(" ") # imprime um espaço entre os números
-		addi $t0, $t0, 4 # incrementa o ponteiro para o array.
-		sub $t1, $t1, 1 # decrementa o contador.
-		bne $t1, $0, loop_print_numbers
+# Procedimento para imprimir o inteiro informado como argumento
+.macro print_integer($arg)
+	move $a0, $arg
+	li $v0, 1
+	syscall
 .end_macro
 
+# Procedimento que obtém um inteiro do teclado e o armazena no registrador passado como argumento através do parâmetro $result. 
+.macro read_integer($result)
+	li $v0, 5 # carrega o read integer service
+	syscall
+	move $result, $v0 # armazena o resultado no registrador informmado 
+.end_macro
+ 
 # Procedimento que simula uma função de limpeza do output.
 # Na verdade, apenas imprimimos o caracter \n por repetidas vezes para que o conteúdo anterior desapareça.   
 .macro clear
@@ -36,7 +35,15 @@
 			bne $t0, $0, loop_clear
 .end_macro
 
-# Subrotina para encerrar o programa.
+# Procedimento que interrompe a thread atual por um tempo aproximado ao valor passado através do parâmetro $duration.
+# $duration: inteiro indicando o tempo em milissegundos em que o processo deve ser interrompido.  
+.macro sleep($duration)
+	li $v0, 32 # carrega o sleep service
+	addi $a0, $0, $duration # atribui a duração a $a0
+	syscall
+.end_macro
+
+# Procedimento para encerrar o programa.
 .macro exit_program
 	li $v0, 10
 	syscall

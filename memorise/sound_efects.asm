@@ -4,7 +4,7 @@
 # O procedimento será utilizado para marcar o tempo em que os números ficarão visíveis na tela.
 # Após o fim do tempo determinado, um som é emitido indicando que o tempo para o jogador memorizar os números acabou.    
 .macro clock($time)
-	lw $t0, $time
+	move $t0, $time
 	# Carrega o MIDI out synchronous service
 	li $v0, 33
 	li $a0, 61 # pitch
