@@ -6,3 +6,60 @@ No código que eu compartilhei tem apenas o fruto de um estudo que fiz para desen
 
 Att
 Cris
+===========
+oi Pessoal... segue um primeiro rascunho do projeto então
+att
+Je
+=============
+// "     |     |      ---------------- cristiano santana -\n"
+// "  1  |  2  | 3     ---------------- jesilene godoy ---\n"
+// " ----|-----|----     ---------------- luis miranda ---\n"
+// "  4  |  5  | 6         -------------------------------\n"
+// " ----|-----|----       -------------------------------\n"
+// "  7  |  8  | 9         -------------------------------\n"
+// "     |     |           -------------------------------\n"
+// " ESCOLHA UMA POSICAO: \n"
+
+// inicialização de variáveis	
+inteiro: PontosX = 0	// contagem de partidas ganhas para jogador X
+inteiro: Pontos0 = 0	// contagem de partidas ganhas para jogador 0
+inteiro:  j, pos		// contador e posição da jogada
+
+
+para j=1 até 9 //(9 jogadas é o máximo de movimentos)
+escolha uma posição: pos
+	se j é impar e j<=9 então
+marcar jogX
+	senão 
+marcar jog0
+	fim-se
+	se j>=4
+		verificar pontuação //(a partir da 4ª jogada pode-se ter um campeão)	
+	fim-se
+fim-para
+
+//====================================
+// verificar pontuação
+//Verificando se o jogX é vencedor da partida:
+se (pos[1]=x e pos[2]=x e pos[3]=x) ou (pos[4]=x e pos[5]=x e pos[6]=x) ou (pos[7]=x e pos[8]=x e pos[9]=x) ou 
+     (pos[1]=x e pos[4]=x e pos[7]=x) ou (pos[2]=x e pos[5]=x e pos[8]=x) ou (pos[3]=x e pos[6]=x e pos[9]=x) ou
+     (pos[1]=x e pos[5]=x e pos[9]=x) ou (pos[3]=x e pos[5]=x e pos[7]=x) então
+	escreva(“Jogador X ganhou!!)
+	PontosX++
+senão // verificar se jog0 é vencedor da partida:
+	se (pos[1]=0 e pos[2]=0 e pos[3]=0) ou (pos[4]=0 e pos[5]=0 e pos[6]=0) ou (pos[7]=0 e pos[8]=0 e pos[9]=0) ou 
+	     (pos[1]=0 e pos[4]=0 e pos[7]=0) ou (pos[2]=0 e pos[5]=0 e pos[8]=0) ou (pos[3]=0 e pos[6]=0 e pos[9]=0) ou
+	     (pos[1]=0 e pos[5]=0 e pos[9]=0) ou (pos[3]=0 e pos[5]=0 e pos[7]=0) então
+		escreva(“Jogador 0 ganhou!!)
+		Pontos0++
+	fim-se
+fim-se
+// verificar se há vencedor da disputa (com diferença de 3 partidas ganhas):
+se PontosX >= (Pontos0 + 3) então
+	escreva(“O jogador X venceu a disputa com “ PontosX “ x “ Pontos0)
+senão
+	se Pontos0 >= (PontosX + 3) então
+		escreva(“O jogador 0 venceu a disputa com “ Pontos0 “ x “ PontosX)
+	fim-se
+fim-se
+
