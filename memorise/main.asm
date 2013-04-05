@@ -1,3 +1,4 @@
+
 .include "core.asm"
 
 .data
@@ -15,6 +16,5 @@
 		set_seed
 
 		set_level_configurations(current_level, numbers_per_level, sequences_per_level, time_per_level)
-		make_attempt(random_numbers, user_numbers, $a0, $a1, $a2)
+		make_attempt(random_numbers, user_numbers, current_level, $a0, $a1, $a2)
 		exit_program
-			
