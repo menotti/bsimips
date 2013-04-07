@@ -4,6 +4,10 @@
 .include "sound_efects.asm"
 .include "utilities.asm"
 
+.eqv LOST_LEVEL 0
+.eqv WON_GAME 1
+.eqv WON_LEVEL 2
+
 # Define as configurações do nível atual do jogo, isto é, determina a quantidade de números a ser exibida,
 # a quantidade de sequências e o tempo de memorização.
 # Após ser chamado o procedimento armazena os resultados nos registradores $a0, $a1 e $a2. 
@@ -218,3 +222,95 @@
 	addi $sp, $sp, 24  
 .end_macro  
 
+# Realiza o cômputo do resultado da tentativa.
+# Após a execução, um valor numérico representando o resultado da tentativa atual é retornado através do registrador $v0. Adicionalmente, o total de números utilizados no níivel é retornado através do registrador $v1.  
+.macro compute_attempt_results($last_level, $quantity_of_numbers, $number_of_sequences, $hits)
+	# Multiplica a quantidade de números pelo número de sequências.
+	mult $quantity_of_numbers, $number_of_sequences
+	# Obtém o resultado a partir do registrador $lo
+	mflo $t1
+
+	# Se o número de acertos não for igual ao total de acertos possíveis no nível, desviamos para lost. 
+	bne $hits, $t1, lost
+		# Se esse trecho foi executado, o jogador venceu o nível. 
+		# Então vamos carregar o valor que representa o último nível.
+		# O objetivo é verificarmos se o jogador venceu o jogo.  
+		li $t2, $last_level
+
+		# Se o nível atual não for o último, então desviamos para o label indicado. 
+		bne $t0, $t2, just_won_level
+			# O jogador venceu o jogo.
+			# Retornamos a constante que indica isso.
+			li $v0, WON_GAME
+			# Desvia para o fim da subrotina, saltando as instruções a seguir.
+			j end_compute_attempt_results 
+
+		just_won_level:
+			# Se esse trecho foi executado, então o jogador só venceu o nível atual.
+			# Retornamos a constante que indica isso.
+			li $v0, WON_LEVEL
+			# Desvia para o fim da subrotina.
+			j end_compute_attempt_results
+
+	lost:
+		# Retornamos a constante que indica que o jogador perdeu.
+		li $v0, LOST_LEVEL
+	end_compute_attempt_results:
+		# Adicionalmente, retornamos o total de números utilizados no nível.
+		move $v1, $t1
+.end_macro
+
+# Exibe os resultados da tentativa.
+# Parâmetros:
+# $level: endereço para o nível atual armazenado na memória.
+# $hits: número de acertos para a tentativa atual.
+# $total_of_numbers: total de números utilizados no nível
+# $result_of_attempt: constante que indica o resultado da tentativa atual (0 = perdeu o nível, 1 = ganhou o jogo e 2 = ganhou o nível).
+.macro print_attempt_results($level, $hits, $total_of_numbers, $result_of_attempt)
+	sub $sp, $sp, 12 # stack frame 
+
+		# Salva na stack os parâmetros a serem utilizados posteriormente.
+	sw $hits, 0 ($sp)
+	sw $total_of_numbers, 4 ($sp)
+	sw $result_of_attempt, 8 ($sp)
+
+	print_string("Voce acertou ")
+	lw $hits, 0 ($sp)
+	print_integer($hits)
+	print_string(" de ")
+	lw $total_of_numbers, 4 ($sp)
+	print_integer($total_of_numbers)
+	print_string(" numeros")
+
+	lw $result_of_attempt, 8 ($sp)
+
+	beq $result_of_attempt, WON_GAME, congratulations # venceu o jogo
+	beq $result_of_attempt, WON_LEVEL, can_advance # venceu o nível atual
+	j try_again # perdeu o nível e deve tentar novamente
+
+		congratulations:
+			print_string("Parabens, voce venceu o Memorize!!!")
+			# Desvia para o fim da subrotina, saltando as instruções a seguir.
+			j end_print_attempt_results
+
+		can_advance:
+			print_string("e podera passar para o nivel ")
+			# Incrementamos o valor do nível para mostrar ao usuário. 
+			lw $t0, $level
+			addi $t0, $t0, 1
+			print_integer($t0)
+			print_string("!")
+			# Desvia para o fim da subrotina.
+			j end_print_attempt_results
+
+		try_again:
+			# Notificamos que o jogador perdeu e precisará tentar de novo.
+			print_string(", o que nao e suficiente para passar de nivel. ")
+			print_string("Voce tera que tentar vencer o nivel ")
+			lw $t0, $level
+			print_integer($t0)
+			print_string(" novamente!")
+
+	end_print_attempt_results:
+	addi $sp, $sp, 12 # restaura a stack 
+.end_macro
