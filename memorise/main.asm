@@ -32,13 +32,18 @@
 .text
 
 	main:
+		# Cria a stack frame para a instrução main.
+		sub $sp, $sp, 16
+
 		# Define a seed para a geração de números randômicos uma só vez no startup do jogo.
 		set_seed
 
-		# Subrotina que executa as instruções centrais para a mecânica do jogo.  
-		play:
-		sub $sp, $sp, 12 # stack frame para a subrotina
+		# Executa as instruções responsáveis pela exibição do menu principal do jogo.
+		menu:
+		# Não implementado ainda.
 
+		# Conjunto de instruções que executam a lógica central do jogo. 
+		play:
 			# Define as configurações do nível atual.
 			# A quantidade de números, sequências e o tempo de memorização do nível atual ficarão nos registradores $a0, $a1 e $a2
 			# e serão utilizadas no procedimento seguinte.
@@ -62,6 +67,8 @@
 
 			# Determina o resultado da tentativa ($v0) e o total de números utilizados no nível ($v1)    
 			compute_attempt_results(LAST_LEVEL, $a0, $a1, $a2)
+			# Salva na stack o resultado da tentativa para posterior utilização
+			sw $v0, 12 ($sp)
 
 			# Define os parâmetros para a subrotina a seguir.
 			lw $a0, 8 ($sp) # número de acertos
@@ -71,7 +78,22 @@
 			# Exibe os resultados da tentativa atual.
 			print_attempt_results(current_level, $a0, $a1, $a2)
 
-			# Restaura a stack.
-			end_play: addi $sp, $sp, 12
+			# Restaura da stack o resultado da tentativa.
+			lw $a0, 12 ($sp)
+			# Chama o procedimento para a atualização do nível atual.
+			modify_level(current_level, $a0)
 
+			# Pergunta ao usuário se deseja ou não continuar jogando.
+			prompt_continue
+
+			# Verifica o resultado e desvia para a instrução correspondente.
+			# Se o procedimento anterior retornou 0, desviamos para o menu.
+			beq $v0, $0, menu
+			# Caso contrário o resultado foi 1 e desviaremos para play (o usuário continuará jogando).
+			j play   
+
+		exit:
+			# Restaura a stack ao estado original.
+			addi $sp, $sp, 16
+			print_string("Ate logo!")
 		exit_program # encerra o programa

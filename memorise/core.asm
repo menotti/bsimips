@@ -4,6 +4,7 @@
 .include "sound_efects.asm"
 .include "utilities.asm"
 
+# Constantes que representam possíveis resultados para cada tentativa. 
 .eqv LOST_LEVEL 0
 .eqv WON_GAME 1
 .eqv WON_LEVEL 2
@@ -289,12 +290,12 @@
 	j try_again # perdeu o nível e deve tentar novamente
 
 		congratulations:
-			print_string("Parabens, voce venceu o Memorize!!!")
+			print_string("\nParabens, voce venceu o Memorize!!!")
 			# Desvia para o fim da subrotina, saltando as instruções a seguir.
 			j end_print_attempt_results
 
 		can_advance:
-			print_string("e podera passar para o nivel ")
+			print_string(" e podera passar para o nivel ")
 			# Incrementamos o valor do nível para mostrar ao usuário. 
 			lw $t0, $level
 			addi $t0, $t0, 1
@@ -312,5 +313,63 @@
 			print_string(" novamente!")
 
 	end_print_attempt_results:
-	addi $sp, $sp, 12 # restaura a stack 
+		print_string("\n\n")
+		addi $sp, $sp, 12 # restaura a stack 
+.end_macro
+
+# Modifica o nível atual se necessário, isto é, se o jogador venceu o nível atual ou o próprio jogo.
+# Se o jogador venceu o nível atual, o procedimento atualiza o nível para o próximo.
+# Se o jogador venceu o jogo, o nível de dificuldade retorna para 1. Caso contrário, o mesmo nível é mantido.
+.macro modify_level($level, $result_of_attempt)
+	# Carrega o nível atual da memória.
+	lw $t0, $level
+	# Carrega as constantes que representam os possíveis resultados da tentativa para posterior comparação.
+	li $t1, WON_LEVEL
+	li $t2, WON_GAME
+
+	# Se o jogador venceu o nível, passamos para o próximo. 
+	beq $result_of_attempt, $t1, pass_to_next
+	# Se o jogador venceu o jogo, reiniciamos.
+	beq $result_of_attempt, $t2, restart
+	# Caso contrário, o jogador perdeu o nível e não faremos nada. 
+	j keep_same_level
+
+		# Incrementamos o nível atual. 
+		pass_to_next: addi $t3, $t0, 1
+		j update_level 
+
+		# Retornamos ao nível 1.
+		restart: li $t3, 1
+
+		# Salvamos o novo valor na memória.
+		update_level: sw $t3, $level
+
+		keep_same_level:
+	.end_macro
+
+# Exibe uma mensagem ao usuário perguntando se ele deseja continuar jogando e obtém a resposta selecionada (s ou n).
+# Após a execução o registrador $v0 conterá uma flag indicando se o jogo deve ou não continuar.
+# Retorno (em $v0): 1 (verdadeiro), o usuário deseja continuar ou 0 (falso) a execução deve retornar ao menu principal.  
+.macro prompt_continue
+	.data
+		yes: .byte 's'
+		no: .byte 'n'
+	.text
+		print_string("Deseja continuar jogando?\n")
+		print_string("s = sim, n = retorna ao menu: ")
+
+		# Carrega e executa a syscall para a leitura de caractéres.
+		li $v0, 12
+		syscall
+
+		# Carrega os caracteres de comparação da memória.
+		lb $t0, yes 
+		lb $t1, no
+
+		beq $v0, $t0, return_true
+		beq $v0, $t1, return_false
+			return_true: li $v0, 1
+			j end_prompt_continue
+			return_false: li $v0, 0
+			end_prompt_continue: clear # limpa a tela
 .end_macro
