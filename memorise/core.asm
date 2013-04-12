@@ -9,6 +9,18 @@
 .eqv WON_GAME 1
 .eqv WON_LEVEL 2
 
+# Exibe o menu principal do jogo e retorna a opção selecionada através do registrador $v0.  
+.macro show_menu
+	sub $sp, $sp, 4
+ 	print_string("Por favor, selecione a opcao desejada:\n")
+	print_string("1 = jogar, 2 = exibir pontuacao atual e 0 = sair: ")
+	read_integer($a0)
+	sw $a0, 0 ($sp)
+	clear
+	lw $v0, 0 ($sp)
+	addi $sp, $sp, 4
+.end_macro
+
 # Define as configurações do nível atual do jogo, isto é, determina a quantidade de números a ser exibida,
 # a quantidade de sequências e o tempo de memorização.
 # Após ser chamado o procedimento armazena os resultados nos registradores $a0, $a1 e $a2. 
@@ -355,21 +367,31 @@
 		yes: .byte 's'
 		no: .byte 'n'
 	.text
+		sub $sp, $sp, 4
 		print_string("Deseja continuar jogando?\n")
 		print_string("s = sim, n = retorna ao menu: ")
-
-		# Carrega e executa a syscall para a leitura de caractéres.
-		li $v0, 12
-		syscall
-
+		read_character($t0)
+		sw $t0, 0 ($sp)
+		clear
+		lw $t0, 0 ($sp)
 		# Carrega os caracteres de comparação da memória.
-		lb $t0, yes 
-		lb $t1, no
+		lb $t1, yes 
+		lb $t2, no
 
-		beq $v0, $t0, return_true
-		beq $v0, $t1, return_false
+		beq $t0, $t1, return_true
+		beq $t0, $t2, return_false
 			return_true: li $v0, 1
 			j end_prompt_continue
 			return_false: li $v0, 0
-			end_prompt_continue: clear # limpa a tela
+			end_prompt_continue: 
 .end_macro
+
+.macro show_score($score)
+	print_string("Sua pontuacao atual e ") 
+	lw $t0, $score
+	print_integer($t0)
+	print_string("\n\n")
+	print_string("Pressione qualquer letra para continuar")
+	read_character($t0)
+	clear
+.end_macro  

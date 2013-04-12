@@ -23,6 +23,14 @@
 	syscall
 	move $result, $v0 # armazena o resultado no registrador informmado 
 .end_macro
+
+# Procedimento que lê um caracter do teclado e o armazena no registrador passado como argumento através do parâmetro $result.  
+.macro read_character($result)
+	# Carrega e executa a syscall para a leitura de caractéres.
+	li $v0, 12
+	syscall
+	move $result, $v0
+.end_macro
  
 # Procedimento que simula uma função de limpeza do output.
 # Na verdade, apenas imprimimos o caracter \n por repetidas vezes para que o conteúdo anterior desapareça.   

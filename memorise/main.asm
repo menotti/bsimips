@@ -38,9 +38,24 @@
 		# Define a seed para a geração de números randômicos uma só vez no startup do jogo.
 		set_seed
 
-		# Executa as instruções responsáveis pela exibição do menu principal do jogo.
+		# Conjunto de instruções responsáveis por exibir o menu principal do jogo e desviar a execução para as instruções correspondentes. 
 		menu:
-		# Não implementado ainda.
+			# Exibe o menu principal e retorna a opção selecionada através do registrador $v0.
+			show_menu
+
+		# Carregamos valores para a comparação com a opção que será selecionada pelo usuário. 
+		li $t0, 1 # jogar
+		li $t1, 2 # exibir pontuação
+
+		# A seguir, efetuamos o desvio a partir da opção selecionada. 
+			beq $v0, $t0, play
+			beq $v0, $t1, show_score
+			beq $v0, $0, exit
+			# Se nenhum dos três desvios foi efetuado, então a opção selecionada é inválida.
+			# Vamos notificar isso ao usuário e retornar ao menu.  
+			print_string("Opcao invalida, por favor, tente novamente\n\n")
+			j menu
+		# end_menu
 
 		# Conjunto de instruções que executam a lógica central do jogo. 
 		play:
@@ -91,7 +106,16 @@
 			beq $v0, $0, menu
 			# Caso contrário o resultado foi 1 e desviaremos para play (o usuário continuará jogando).
 			j play   
+		# end_play
 
+		# Instruções para exibir a pontuação geral do jogador.
+		show_score:
+			show_score(score)
+			# Retornamos ao menu principal.
+			j menu
+		# end_menu
+
+		# Instruções para o encerramento do programa. 
 		exit:
 			# Restaura a stack ao estado original.
 			addi $sp, $sp, 16
