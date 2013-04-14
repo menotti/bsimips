@@ -1,13 +1,13 @@
 Oi pessoal!
 
-Precisamos criar um algorítmo antes de começar implementar propriamente o código.
+Precisamos criar um algorÃ­tmo antes de comeÃ§ar implementar propriamente o cÃ³digo.
 
-No código que eu compartilhei tem apenas o fruto de um estudo que fiz para desenhar no BitMapDisplay.
+No cÃ³digo que eu compartilhei tem apenas o fruto de um estudo que fiz para desenhar no BitMapDisplay.
 
 Att
 Cris
 ===========
-oi Pessoal... segue um primeiro rascunho do projeto então
+oi Pessoal... segue um primeiro rascunho do projeto entÃ£o
 att
 Je
 =============
@@ -20,46 +20,54 @@ Je
 // "     |     |           -------------------------------\n"
 // " ESCOLHA UMA POSICAO: \n"
 
-// inicialização de variáveis	
+// inicializaÃ§Ã£o de variÃ¡veis	
 inteiro: PontosX = 0	// contagem de partidas ganhas para jogador X
 inteiro: Pontos0 = 0	// contagem de partidas ganhas para jogador 0
-inteiro:  j, pos		// contador e posição da jogada
+inteiro:  j, pos		// contador e posiÃ§Ã£o da jogada
 
 
-para j=1 até 9 //(9 jogadas é o máximo de movimentos)
-escolha uma posição: pos
-	se j é impar e j<=9 então
+para j=1 atÃ© 9 //(9 jogadas Ã© o mÃ¡ximo de movimentos)
+escolha uma posiÃ§Ã£o: pos
+	se j Ã© impar e j<=9 entÃ£o
 marcar jogX
-	senão 
+	senÃ£o 
 marcar jog0
 	fim-se
 	se j>=4
-		verificar pontuação //(a partir da 4ª jogada pode-se ter um campeão)	
+		verificar pontuaÃ§Ã£o //(a partir da 4Âª jogada pode-se ter um campeÃ£o)	
 	fim-se
 fim-para
 
 //====================================
-// verificar pontuação
-//Verificando se o jogX é vencedor da partida:
+// verificar pontuaÃ§Ã£o
+//Verificando se o jogX Ã© vencedor da partida:
 se (pos[1]=x e pos[2]=x e pos[3]=x) ou (pos[4]=x e pos[5]=x e pos[6]=x) ou (pos[7]=x e pos[8]=x e pos[9]=x) ou 
      (pos[1]=x e pos[4]=x e pos[7]=x) ou (pos[2]=x e pos[5]=x e pos[8]=x) ou (pos[3]=x e pos[6]=x e pos[9]=x) ou
-     (pos[1]=x e pos[5]=x e pos[9]=x) ou (pos[3]=x e pos[5]=x e pos[7]=x) então
-	escreva(“Jogador X ganhou!!)
+     (pos[1]=x e pos[5]=x e pos[9]=x) ou (pos[3]=x e pos[5]=x e pos[7]=x) entÃ£o
+	escreva(Â“Jogador X ganhou!!)
 	PontosX++
-senão // verificar se jog0 é vencedor da partida:
+senÃ£o // verificar se jog0 Ã© vencedor da partida:
 	se (pos[1]=0 e pos[2]=0 e pos[3]=0) ou (pos[4]=0 e pos[5]=0 e pos[6]=0) ou (pos[7]=0 e pos[8]=0 e pos[9]=0) ou 
 	     (pos[1]=0 e pos[4]=0 e pos[7]=0) ou (pos[2]=0 e pos[5]=0 e pos[8]=0) ou (pos[3]=0 e pos[6]=0 e pos[9]=0) ou
-	     (pos[1]=0 e pos[5]=0 e pos[9]=0) ou (pos[3]=0 e pos[5]=0 e pos[7]=0) então
-		escreva(“Jogador 0 ganhou!!)
+	     (pos[1]=0 e pos[5]=0 e pos[9]=0) ou (pos[3]=0 e pos[5]=0 e pos[7]=0) entÃ£o
+		escreva(Â“Jogador 0 ganhou!!)
 		Pontos0++
 	fim-se
 fim-se
-// verificar se há vencedor da disputa (com diferença de 3 partidas ganhas):
-se PontosX >= (Pontos0 + 3) então
-	escreva(“O jogador X venceu a disputa com “ PontosX “ x “ Pontos0)
-senão
-	se Pontos0 >= (PontosX + 3) então
-		escreva(“O jogador 0 venceu a disputa com “ Pontos0 “ x “ PontosX)
+// verificar se hÃ¡ vencedor da disputa (com diferenÃ§a de 3 partidas ganhas):
+se PontosX >= (Pontos0 + 3) entÃ£o
+	escreva(Â“O jogador X venceu a disputa com Â“ PontosX Â“ x Â“ Pontos0)
+senÃ£o
+	se Pontos0 >= (PontosX + 3) entÃ£o
+		escreva(Â“O jogador 0 venceu a disputa com Â“ Pontos0 Â“ x Â“ PontosX)
 	fim-se
 fim-se
+
+14/4/13 - by Cristiano Santana
+Programa em pelno funcionamento.... pessoALL!
+
+- Verifica quem ganhou, confere o vencedor, traÃ§a sobre os Xs ou os Os demonstrando o vencedor.
+
+
+
 
