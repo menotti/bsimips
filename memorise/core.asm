@@ -21,6 +21,52 @@
 	addi $sp, $sp, 4
 .end_macro
 
+# Permite ao usuário selecionar o nível de dificuldade do jogo se desejado.
+.macro prompt_select_level($level)
+	.data
+		yes: .byte 's'
+		no: .byte 'n'
+	.text
+		sub $sp, $sp, 4 # stack frame
+		prompt: print_string("Deseja selecionar o nivel de dificuldade do jogo?\n")
+		print_string("s = sim, n = nao (comeca pelo nivel 1):")
+		read_character($t0)
+		sw $t0, 0 ($sp) # salva a resposta na stack
+		clear
+
+		lw $t0, 0 ($sp) # restaura a resposta da stack
+		# Carrega da memória os caractéres de comparação.
+		lb $t1, yes
+		lb $t2, no
+
+		beq $t0, $t1, get_level
+		beq $t0, $t2, use_first_level
+		# Se nenhum dos dois desvios foi executado, a opção é inválida.
+		print_string("Opcao invalida. Por favor, tente novamente\n\n")
+		j prompt 
+ 
+		get_level:
+			print_string("Informe o nivel desejado (somente valores que estejam no intervalo [1-5]): ")
+			read_integer($t0)
+			# A seguir, validamos se a entrada está no intervalo informado.
+			slt $t1, $0, $t0
+			slti $t2, $t0, 6
+			and $t3, $t1, $t2  
+			li $t4, 1 # valor para comparação
+			beq $t3, $t4, end_prompt_select_level
+			# Se esse trecho foi executado, então o valor digitado é inválido.
+			clear
+			print_string("Valor invalido, por favor, tente novamente\n\n")
+			j get_level 
+
+		use_first_level:
+			li $t0, 1 # primeiro nível
+
+			end_prompt_select_level:
+				sw $t0, $level # armazena na memória o nível a ser utilizado 
+				addi $sp, $sp, 4 # restaura a stack frame  
+.end_macro
+
 # Define as configurações do nível atual do jogo, isto é, determina a quantidade de números a ser exibida,
 # a quantidade de sequências e o tempo de memorização.
 # Após ser chamado o procedimento armazena os resultados nos registradores $a0, $a1 e $a2. 
@@ -383,7 +429,8 @@
 			return_true: li $v0, 1
 			j end_prompt_continue
 			return_false: li $v0, 0
-			end_prompt_continue: 
+			end_prompt_continue:
+			addi $sp, $sp, 4 
 .end_macro
 
 .macro show_score($score)

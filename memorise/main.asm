@@ -57,7 +57,7 @@
 		li $t1, 2 # exibir pontuação
 
 		# A seguir, efetuamos o desvio a partir da opção selecionada. 
-			beq $v0, $t0, play
+			beq $v0, $t0, select_level 
 			beq $v0, $t1, show_score
 			beq $v0, $0, exit
 			# Se nenhum dos três desvios foi efetuado, então a opção selecionada é inválida.
@@ -65,6 +65,10 @@
 			print_string("Opcao invalida, por favor, tente novamente\n\n")
 			j menu
 		# end_menu
+
+		# Instrução que possibilita ao usuário selecionar o nível de dificuldade ou começar pelo nível padrão, antes de entrar na "tela" de jogo propriamente dita.
+		select_level:
+			prompt_select_level(current_level)
 
 		# Conjunto de instruções que executam a lógica central do jogo. 
 		play:
@@ -122,7 +126,7 @@
 			show_score(score)
 			# Retornamos ao menu principal.
 			j menu
-		# end_menu
+		# end_show_score
 
 		# Instruções para o encerramento do programa. 
 		exit:
