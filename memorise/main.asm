@@ -15,8 +15,11 @@
 .eqv LAST_LEVEL 5
  
 .data
-	# Nome do arquivo com as informações do cabeçalho do jogo.
-	header: .asciiz "resources/header.txt"
+	# Caminho para o arquivo com as informações do cabeçalho do jogo.
+	header_file: .asciiz "resources/header.txt"
+	# Caminho para o arquivo de ajuda do jogo.
+	help_file: .asciiz "resources/help.txt"
+
 	# Altere os valores dos três arrays a seguir para modificar as configurações padrão para
 	# a quantidade de números, número de sequências e tempo de memorização de cada nível do jogo.
 	# Note que por padrão o jogo terá cinco níveis.
@@ -26,8 +29,10 @@
 	# Arrays para armazenar os números gerados pelo jogo e os números digitados pelo usuário.   
 	random_numbers: .word 0:10
 	user_numbers: .word 0:10
+
 	# Armazenará o nível atual do jogo. Por padrão, é inicializado em 1.
 	current_level: .word 1
+
 	# Armazenará a pontuação geral do usuário no jogo.
 	score: .word 0
 
@@ -38,10 +43,11 @@
 		sub $sp, $sp, 16
 
 		# Define a seed para a geração de números randômicos uma só vez no startup do jogo.
+		# Veja random.asm para maiores detalhes.
 		set_seed
 
 				# Exibe o cabeçalho do jogo.
-		print_from_file(header, 300)
+		print_from_file(header_file, 300)
 
 		# Dispara o efeito sonoro de boas vindas.
 		# Veja sound_efects.asm para maiores detalhes.
@@ -55,12 +61,14 @@
 		# Carregamos valores para a comparação com a opção que será selecionada pelo usuário. 
 		li $t0, 1 # jogar
 		li $t1, 2 # exibir pontuação
+		li $t2, 3 # exibir ajuda
 
 		# A seguir, efetuamos o desvio a partir da opção selecionada. 
 			beq $v0, $t0, select_level 
 			beq $v0, $t1, show_score
+			beq $v0, $t2, show_help
 			beq $v0, $0, exit
-			# Se nenhum dos três desvios foi efetuado, então a opção selecionada é inválida.
+			# Se nenhum dos quatro desvios foi efetuado, então a opção selecionada é inválida.
 			# Vamos notificar isso ao usuário e retornar ao menu.  
 			print_string("Opcao invalida, por favor, tente novamente\n\n")
 			j menu
@@ -127,6 +135,15 @@
 			# Retornamos ao menu principal.
 			j menu
 		# end_show_score
+
+		# Instruções para a exibição da ajuda do jogo.
+		show_help:
+			print_from_file(help_file, 2000)
+			print_string("Pressione qualquer letra para continuar: ")
+			read_character($t0)
+			clear
+			j menu
+		# end_show_help
 
 		# Instruções para o encerramento do programa. 
 		exit:

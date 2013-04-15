@@ -1,0 +1,8 @@
+ Ajuda do Memorize
+
+ O Memorize e um jogo simples de memorizacao baseado em numeros aleatorios.
+ Atualmente, o jogo suporta cinco niveis de dificuldade. A cada nivel uma determinada quantidade de numeros sera exibida e o jogador tera um dado tempo para tentar memoriza-los. Alem disso, cada nivel de dificuldade e composto por uma determinada sequencia numerica. As informacoes sobre a quantidade de tempo que o jogador tera para memorizar cada sequencia numerica, o numero da sequencia atual e a quantidade total de sequencias do nivel sao exibidas a cada tentativa. Note tambem que um efeito sonoro realiza a contagem do tempo indicando a passagem de cada segundo.
+ Para passar de nivel, o jogador devera acertar todos os numeros de cada sequencia numerica exibida no nivel atual. Alternativamente, e possivel selecionar o nivel de dificuldade desejado e tentar prosseguir a partir dele. Na medida em que o jogador avanca entre os niveis do jogo, o numero de sequencias diminui, enquanto que a quantidade de numeros a ser memorizada e o tempo de memorizacao aumentam.  
+ A cada tentativa, o Memorize exibe o indice de acertos do jogador. Alem disso, e possivel visualizar a pontuacao geral (que corresponde a soma de acertos do jogador em cada tentativa) atraves da opcao correspondente no menu do programa.
+
+      

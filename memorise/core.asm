@@ -13,7 +13,7 @@
 .macro show_menu
 	sub $sp, $sp, 4
  	print_string("Por favor, selecione a opcao desejada:\n")
-	print_string("1 = jogar, 2 = exibir pontuacao atual e 0 = sair: ")
+	print_string("1 = jogar, 2 = exibir pontuacao atual, 3 = exibir ajuda e 0 = sair: ")
 	read_integer($a0)
 	sw $a0, 0 ($sp)
 	clear
@@ -433,6 +433,7 @@
 			addi $sp, $sp, 4 
 .end_macro
 
+# Procedimento para a exibição da pontuação geral do jogador.
 .macro show_score($score)
 	print_string("Sua pontuacao atual e ") 
 	lw $t0, $score
