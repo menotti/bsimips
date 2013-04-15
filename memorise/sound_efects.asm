@@ -24,3 +24,21 @@
 
 	syscall
 	.end_macro
+
+# Cria um efeito sonoro (ou uma tentativa de) para ser utilizado no início do jogo.  
+	.macro welcome
+	# Carrega o MIDI out synchronous service
+	li $v0, 33
+li $a0, 60 # pitch
+li $a1, 900 # duração em milisegundos
+li $a2, 24 # guitarra
+li $a3, 127 # volume máximo
+li $t0, 4 # contador para o loop
+
+	loop_welcome:
+		sub $t0, $t0, 1
+		syscall
+		addi $a0, $a0, 2
+		sub $a1, $a1, 100
+		bne $t0, $0, loop_welcome
+	.end_macro

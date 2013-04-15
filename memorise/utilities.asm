@@ -1,5 +1,45 @@
 ## Contém procedimentos utilitários diversos para uso no jogo.
 
+# Procedimento que abre o arquivo informado como parâmetro, lê seu conteúdo e o imprime no output padrão.
+# Após ter impresso o conteúdo do arquivo, este é fechado. 
+# Parâmetros:
+# $file_name: nome do arquivo a ser lido e impresso.
+# $maximum_numbers_of_characters: número máximo de caracteres a serem lidos no arquivo.
+.macro print_from_file($file_name, $maximum_numbers_of_characters)
+	.data
+		# Buffer para armazenar o conteúdo do arquivo lido.
+		buffer: .space $maximum_numbers_of_characters
+	.text
+		# Carrega o open file service.
+		li $v0, 13
+		# Carrega o endereço que contém o nome do arquivo.
+		la $a0, $file_name
+		# Flag indicando que o arquivo será aberto em modo de leitura.
+		li $a1, 0
+		li $a2, 0 
+		# Abre o arquivo indicado e retorna o "file descriptor" através de $v0.
+		syscall
+		# Salva o file descriptor em $t0.
+		move $t0, $v0
+
+		# Carrega o read file service.
+		li $v0, 14
+		move $a0, $t0 # file descriptor
+		la $a1, buffer # buffer para o qual será copiado o conteúdo do arquivo.
+		li $a2, $maximum_numbers_of_characters # número máximo de caracteres a serem lidos
+		syscall # lê o conteúdo do arquivo
+
+		# Carrega o print string service
+		li $v0, 4
+		la $a0, buffer # carrega o buffer com o conteúdo do arquivo
+		syscall # imprime o conteúdo do arquivo carregado
+
+				# Carrega o close file service
+		li $v0, 16
+		move $a0, $t0 # file descriptor a ser fechado
+		syscall # fecha o arquivo
+.end_macro
+
 # Procedimento para imprimir a string informada como argumento.
 .macro print_string($arg)
 	.data

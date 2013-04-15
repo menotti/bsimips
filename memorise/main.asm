@@ -15,6 +15,8 @@
 .eqv LAST_LEVEL 5
  
 .data
+	# Nome do arquivo com as informações do cabeçalho do jogo.
+	header: .asciiz "resources/header.txt"
 	# Altere os valores dos três arrays a seguir para modificar as configurações padrão para
 	# a quantidade de números, número de sequências e tempo de memorização de cada nível do jogo.
 	# Note que por padrão o jogo terá cinco níveis.
@@ -37,6 +39,13 @@
 
 		# Define a seed para a geração de números randômicos uma só vez no startup do jogo.
 		set_seed
+
+				# Exibe o cabeçalho do jogo.
+		print_from_file(header, 300)
+
+		# Dispara o efeito sonoro de boas vindas.
+		# Veja sound_efects.asm para maiores detalhes.
+		welcome
 
 		# Conjunto de instruções responsáveis por exibir o menu principal do jogo e desviar a execução para as instruções correspondentes. 
 		menu:
