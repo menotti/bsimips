@@ -91,7 +91,7 @@
 
 			# Executa a tentativa atual.
 			# Veja core.asm para maiores detalhes.
-			run_attempt(random_numbers, user_numbers, current_level, $a0, $a1, $a2, score)
+			run_attempt(random_numbers, user_numbers, current_level,  $a0, $a1, $a2, score)
 			# Move para $a2 o número de acertos que foi deixado pelo procedimento anterior em $v0.
 			move $a2, $v0
 			# Salva o valor na stack para posterior utilização.
@@ -102,7 +102,7 @@
 			lw $a1, 4 ($sp)
 
 			# Determina o resultado da tentativa ($v0) e o total de números utilizados no nível ($v1)    
-			compute_attempt_results(LAST_LEVEL, $a0, $a1, $a2)
+			compute_attempt_results(current_level, LAST_LEVEL, $a0, $a1, $a2)
 			# Salva na stack o resultado da tentativa para posterior utilização
 			sw $v0, 12 ($sp)
 

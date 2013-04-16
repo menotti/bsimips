@@ -283,7 +283,9 @@
 
 # Realiza o cômputo do resultado da tentativa.
 # Após a execução, um valor numérico representando o resultado da tentativa atual é retornado através do registrador $v0. Adicionalmente, o total de números utilizados no níivel é retornado através do registrador $v1.  
-.macro compute_attempt_results($last_level, $quantity_of_numbers, $number_of_sequences, $hits)
+.macro compute_attempt_results($level, $last_level, $quantity_of_numbers, $number_of_sequences, $hits)
+	# Carrega da memória o nível atual.
+	lw $t0, $level
 	# Multiplica a quantidade de números pelo número de sequências.
 	mult $quantity_of_numbers, $number_of_sequences
 	# Obtém o resultado a partir do registrador $lo
@@ -348,7 +350,9 @@
 	j try_again # perdeu o nível e deve tentar novamente
 
 		congratulations:
-			print_string("\nParabens, voce venceu o Memorize!!!")
+			print_string(" e venceu o Memorize! Parabens!!!")
+			# Dispara o efeito sonoro de vitória.
+			victory
 			# Desvia para o fim da subrotina, saltando as instruções a seguir.
 			j end_print_attempt_results
 
@@ -359,6 +363,8 @@
 			addi $t0, $t0, 1
 			print_integer($t0)
 			print_string("!")
+			# Dispara o efeito sonoro associado ao acerto do jogador.
+			hit
 			# Desvia para o fim da subrotina.
 			j end_print_attempt_results
 
@@ -369,6 +375,8 @@
 			lw $t0, $level
 			print_integer($t0)
 			print_string(" novamente!")
+			# Tocamos o som que indica o erro.
+			error
 
 	end_print_attempt_results:
 		print_string("\n\n")
