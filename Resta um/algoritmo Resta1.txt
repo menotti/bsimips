@@ -1,0 +1,80 @@
+{
+
+         Estou fazendo uma algoritmo para direcionar nosso trabalho, travei um pouco na hora em que a peça passa por cima da outra como fazer as verificações se alguém puder ajudar.
+
+}
+
+
+{ Algoritmo do jogo Resta 01 }
+
+Declare:
+
+        vetor[7][7]: tipo char
+        verificar: tipo inteiro
+        linha, coluna: tipo inteiro
+        l, c: tipo inteiro
+         
+
+{ iniciar o vetor }
+
+       para i <- 0 até i < 7
+
+            para j = 0 até 7 faça
+
+                 se j < 3 e i < 3 ou i > 6 faça
+                 
+                     vetor[i][j] <- " " 
+                 
+                 senão
+                  
+                   vetor[i][j] <- X      { Peças do jogo e um vetor recebe vazio }
+
+             fim para
+
+       fim para
+
+       vetor[4][4] <- " " { vazio, zerando a posição do do jogo }
+
+       c <- 0
+       l <- 0
+        
+
+       faça enquanto  
+     
+          escreva "Digite a opção desejada"
+          escreva "0 para sair"
+          escreva "Escolha a Linha de 1 a 7"
+          escreva "Escolha a Coluna de 1 a 7"
+
+	  leia  Linha
+          leia  Coluna
+ 
+          se linha ou coluna = 0 então
+
+              fim algoritmo
+
+          senão
+              
+              se vetor[linha][coluna] <- " " então
+
+                 escreve "Posição invalida"
+
+              senão
+
+                 l <- escreva "Digite a linha para onde a peça irá"
+                 c <- escreva "Digite a coluna para onde a peça irá"
+
+                     se 
+                           vetor[l][c]
+
+                     senão
+
+                     fim se                               
+ 
+              fim - se   
+           
+          fim se    
+
+
+       fim faça
+
