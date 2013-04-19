@@ -55,21 +55,33 @@ Declare:
 
           senão
               
-              se vetor[linha][coluna] <- " " então
-
+              se vetor[linha][coluna] = " " ou linha > 7 ou coluna > 7então
+                
                  escreve "Posição invalida"
 
               senão
 
-                 l <- escreva "Digite a linha para onde a peça irá"
-                 c <- escreva "Digite a coluna para onde a peça irá"
+                               
+                 leia l              {Pegar onde o usario quer jogar }
+                 leia c              {Pegar onde o usario quer jogar }
 
-                     se 
-                           vetor[l][c]
+                 se vetro[l][c] <> " " ou l > 7 ou c > 7 então
 
-                     senão
+                       escreva "Opção invalida"
+                 
+                 senão
 
-                     fim se                               
+                      se c < 3 e l < 3 ou c > 5 e l < 3 ou c < 3 e l > 5 ou c > 3 e l > 5 então
+  
+                           escreva "Opção invalida"
+
+                      senão
+                           
+                     
+                      fim - se      
+  
+                      
+                                           
  
               fim - se   
            
