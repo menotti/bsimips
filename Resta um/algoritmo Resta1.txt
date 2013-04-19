@@ -77,10 +77,142 @@ Declare:
 
                       senão
                            
+                           se linha - l > 2 ou < - 2 ou coluna - c > 2 ou < -2 então 
+ 
+                                escreva "Opção invalida"
+             
+                           senão
+
+                                se linha = l então
+
+                                    se coluna > c então
+                                           
+                                        se vetor[linha][coluna - 1] <> " "
+
+                                             vetor[linha][coluna - 1] <- " "                                      
+                                              
+                                        senão 
+                                             
+                                              escreva "Jogada invalida"
+
+                                         fim - se 
+                              
+                                    senão
+                                          se vetor[linha][coluna + 1] <> " "
+
+                                             vetor[linha][coluna + 1] <- " "                                      
+                                              
+                                         senão 
+                                             
+                                              escreva "Jogada invalida"
+
+
+                                    fim - se                                 
+     
+                                fim - se
+
+                                se coluna = c 
+
+                                     se linha > l então
+
+                                         se vetor[linha-1][coluna] <> " " então
+
+                                               vetor[linha-1][coluna] <- " "
+                                  
+                                         senão
+
+                                               escreva "Jogada invalida"
+
+                                         fim - se
+
+
+                                     senão 
+
+                                          se vetor[linha+1][coluna] <> " " então
+
+                                               vetor[linha+1][coluna] <- " "
+                                  
+                                         senão
+
+                                               escreva "Jogada invalida"
+
+                                         fim - se
+
+
+                                     fim - se                                   
+
+
+                                fim - se
+
+                                se linha <> l e coluna <> c então
+
+                                        se linha > l e coluna > c então
+
+                                              se vetor[linha - 1][coluna - 1] <> " " então
+
+                                                    vetor[linha - 1][coluna - 1] <- " " 
+
+                                              senão 
+
+                                                    escreva "Jogada invalida"
+
+                                              fim - se
+
+
+                                        se linha < l e coluna < c então
+
+                                              se vetor[linha + 1][coluna - 1] <> " " então
+
+                                                    vetor[linha + 1][coluna - 1] <- " " 
+
+                                              senão 
+
+                                                    escreva "Jogada invalida"
+
+                                              fim - se
+
+
+                                        
+                                        se linha > l e coluna < c então
+
+                                              se vetor[linha - 1][coluna + 1] <> " " então
+
+                                                    vetor[linha - 1][coluna + 1] <- " " 
+
+                                              senão 
+
+                                                    escreva "Jogada invalida"
+
+                                              fim - se
+
+
+                   
+                                        se linha < l e coluna > c então
+
+                                              se vetor[linha + 1][coluna - 1] <> " " então
+
+                                                    vetor[linha + 1][coluna - 1] <- " " 
+
+                                              senão 
+
+                                                    escreva "Jogada invalida"
+
+                                              fim - se
+
+
+                                      
+                                        fim - se
+
+
+                                fim - se  
+                                
+                      
+                           fim - se                          
                      
                       fim - se      
   
-                      
+                           
+
                                            
  
               fim - se   
