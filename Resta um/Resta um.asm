@@ -15,22 +15,28 @@ casa_vazia:
 casa_cheia:
 	.asciiz "O"
 	
-INICIALIZACAO:
-	.ascii	"*GAME: RESTA UM*"
+mensagem_inicio:
+	.asciiz	"*GAME: RESTA UM*"
 	
+mensagem_atual:
+	.asciiz	"\nDigite o local para onde peça está: "
 	
 mensagem_mover:
-	.asciiz	"\nDigite o local para onde a peça ira se mover: "
-	
+	.asciiz	"\nDigite o local para onde peça irá se mover: "
+
+PLAYER_QUIT_MSG:
+	.asciiz "\nPlayer quit."
+
+		
 # Desenhar tabuleiro
 tabuleiro_topo:
-	.asciiz			"    0  1  2  3  4  5  6\n"
+	.asciiz		"   0123456\n"
 margem_vertical:
-	.asciiz			"        -----------\n"
+	.asciiz			"    -----\n"
 linha_0:
-	.asciiz		"0       |"
+	.asciiz		"0   |"
 linha_1:
-	.asciiz		"1 -------"
+	.asciiz		"1 -- "
 linha_2:
 	.asciiz		"2 |"
 linha_3:
@@ -38,16 +44,19 @@ linha_3:
 linha_4:
 	.asciiz		"4 |"
 linha_5:
-	.asciiz		"5 -------"
+	.asciiz		"5 -- "
 linha_6:
-	.asciiz		"6       |"
+	.asciiz		"6   |"
 margem_horizontal:
-	.asciiz			"-------\n"
+	.asciiz			" --\n"
 tabuleiro_fim:
 	.asciiz			"|\n"
 
 espaco:
 	.asciiz			"|      \n"
+
+espaco2:
+	.asciiz			"\n"	
 
 
 # Texto
@@ -59,7 +68,7 @@ espaco:
 main:   
 	# Mensagem inicial
 	li	$v0, 4	
-	la	$a0, INICIALIZACAO
+	la	$a0, mensagem_inicio
 	syscall			
 
 	# Iniciar o tabuleiro
@@ -91,13 +100,13 @@ alocacao_tabuleiro:
 	li	$s0, 0 		# Linha atual
 
 loop:
-	# Repetidção para próxima linha enquanto linha for menor que largura do tabuleiro.
+	# Repetição para próxima linha enquanto linha for menor que largura do tabuleiro.
 	slt 	$t0, $s0, $s2				
 	beq	$t0, $zero,  desenho_tabuleiro	#retornar
 
 	li	$s1, 0		# Coluna atual
 loop1:
-	# Repetidção para próxima coluna enquanto coluna for menor que largura do tabuleiro.
+	# Repetição para próxima coluna enquanto coluna for menor que largura do tabuleiro.
 	slt	$t0, $s1, $s2				
 	beq	$t0, $zero, loop3	
 	
@@ -152,38 +161,12 @@ pino:
         
         move	$s0, $a0
         
-        # imprimir casa vazia
-        li	$v0, 4	
-	la	$a0, casa_vazia
-	syscall
-	
-	# confirmar o pino
-	addi	$t0, $zero, 10	
-	div	$s0, $t0	
-	mflo	$s0		
-	mfhi	$s1		
-	
-	# coordenada do pino
-	la	$t0, pino_coord	
-	add	$t1, $zero, $s0		
-	mul	$t1, $t1, 7		
-	add	$t1, $t1, $s1		
-	
-	add	$t0, $t0, $t1		
-	lb	$t2, 0($t0)		
-	beqz	$t2, desenhar_vazio
 	
 desenhar_pino:
 	li	$v0, 4	
 	la	$a0, casa_cheia
 	syscall
 
-	
-desenhar_vazio:
-	li	$v0, 4	
-	la	$a0, casa_vazia
-	syscall
-	
         
 desenhar_casas:
         lw      $ra, 32($sp)    	# Ler vetores dos pinos armazenados na memoria
@@ -216,6 +199,10 @@ desenhar_tabuleiro:
         
         # desenhar linhas inicio
         li	$v0, 4	
+	la	$a0, espaco2
+	syscall
+	
+        li	$v0, 4	
 	la	$a0, tabuleiro_topo
 	syscall	
 	
@@ -224,6 +211,8 @@ desenhar_tabuleiro:
 	syscall
 	
 	# desenhar linha 0
+
+	
 	li	$v0, 4	
 	la	$a0, linha_0
 	syscall
@@ -285,7 +274,7 @@ desenhar_tabuleiro:
 	
 	li	$a0, 26
 	jal	pino
-	
+		
 	li	$v0, 4	
 	la	$a0, tabuleiro_fim
 	syscall
@@ -305,8 +294,9 @@ desenhar_tabuleiro:
 	jal	pino
 	
 	li	$a0, 33
-	jal	pino
-	
+	la	$a0, casa_vazia
+	syscall
+
 	li	$a0, 34
 	jal	pino
 	
@@ -390,6 +380,18 @@ desenhar_tabuleiro:
 	li	$v0, 4	
 	la	$a0, margem_vertical
 	syscall
-	
 
+	
+desenhar_tabuleiro_leitura:
+        lw      $ra, 32($sp)    # ler dados alocados na memoria
+        lw      $s7, 28($sp)
+        lw      $s6, 24($sp)
+        lw      $s5, 20($sp)
+        lw      $s4, 16($sp)
+        lw      $s3, 12($sp)
+        lw      $s2, 8($sp)
+        lw      $s1, 4($sp)
+        lw      $s0, 0($sp)
+        addi    $sp, $sp, 40      # limpar
+        jr	$ra	
 	
