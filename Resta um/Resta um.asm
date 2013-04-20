@@ -6,7 +6,7 @@
 
 # Globals
 pino_coord:
-	.space 	49	# 49 pinos
+	.space 	49	# vetor de 49 pinos
 			
 # TABULEIRO DO JOGO
 casa_vazia:
@@ -63,7 +63,8 @@ main:
 	syscall			
 
 	# Iniciar o tabuleiro
-	jal 	preencher	
+	jal 	alocacao_tabuleiro
+		
 
 desenhar:
 	jal	desenhar_tabuleiro
@@ -72,9 +73,9 @@ desenhar:
 
 # Preenchimento do tabuleiro 
 
-preencher:
-        addi    $sp, $sp, -40	
-        sw      $ra, 32($sp)    
+alocacao_tabuleiro:
+        addi    $sp, $sp, -40	# alocação do tabuleiro no vetor na memoria
+        sw      $ra, 32($sp)    # armazenar vetores na memória
         sw      $s7, 28($sp)
         sw      $s6, 24($sp)
         sw      $s5, 20($sp)
@@ -85,21 +86,22 @@ preencher:
         sw      $s0, 0($sp)
 
 	# Preparar para loops
-	li	$s2, 7 
+	li	$s2, 7 		#Largura do tabuleiro
 	
-	li	$s0, 0	
+	li	$s0, 0		#Linha atual
 
 loop:
-	# laço de repetição
+	# Repetidção para próxima linha enquanto linha for menor que largura do tabuleiro.
 	slt 	$t0, $s0, $s2				
-	beq	$t0, $zero, local_pino	#retornar
+	beq	$t0, $zero,  desenho_tabuleiro	#retornar
 
-	li	$s1, 0	
+	li	$s1, 0		#Coluna atual
 loop1:
+	# Repetidção para próxima coluna enquanto coluna for menor que largura do tabuleiro.
 	slt	$t0, $s1, $s2				
 	beq	$t0, $zero, loop3	
 	
-	# verificar coordenada
+	# verificar se a coordenada é válida
 	mul	$a0, $s0, 10		
 	add	$a0, $a0, $s1			
 	
@@ -112,15 +114,16 @@ loop1:
 	sb	$v0, 0($t0)		
 	
 loop2:
-	addi	$s1, $s1, 1		
+	# loop interno
+	addi	$s1, $s1, 1		#Coluna atual++
 	j 	loop1	
 	
 loop3:
-	addi	$s0, $s0, 1	
+	#loop externo
+	addi	$s0, $s0, 1		#Linha atual++
 	j	loop		
-	
-local_pino:
-        lw      $ra, 32($sp)   
+desenho_tabuleiro:
+        lw      $ra, 32($sp)   		# ler vetores do tabuleiro armazenados na memória
         lw      $s7, 28($sp)
         lw      $s6, 24($sp)
         lw      $s5, 20($sp)
@@ -129,14 +132,14 @@ local_pino:
         lw      $s2, 8($sp)
         lw      $s1, 4($sp)
         lw      $s0, 0($sp)
-        addi    $sp, $sp, 40      
+        addi    $sp, $sp, 40      	# limpar os dados
 	jr	$ra
 
 
 #Desenhar pinos
 
 pino:
-        addi    $sp, $sp, -40	
+        addi    $sp, $sp, -40		# Alocar dos pinos no vetor na memoria
         sw      $ra, 32($sp)    
         sw      $s7, 28($sp)
         sw      $s6, 24($sp)
@@ -183,7 +186,7 @@ desenhar_vazio:
 	
         
 desenhar_casas:
-        lw      $ra, 32($sp)    
+        lw      $ra, 32($sp)    	# Ler vetores dos pinos armazenados na memoria
         lw      $s7, 28($sp)
         lw      $s6, 24($sp)
         lw      $s5, 20($sp)
@@ -192,7 +195,7 @@ desenhar_casas:
         lw      $s2, 8($sp)
         lw      $s1, 4($sp)
         lw      $s0, 0($sp)
-        addi    $sp, $sp, 40      # limpar
+        addi    $sp, $sp, 40      	# limpar
         jr	$ra
         	
 	
@@ -200,7 +203,7 @@ desenhar_casas:
 # Desenhar tabuleiro
 
 desenhar_tabuleiro:
-        addi    $sp, $sp, -40	
+        addi    $sp, $sp, -40		# alocar vetores do tabuleiro na memoria para desenhar o tabuleiro
         sw      $ra, 32($sp)    
         sw      $s7, 28($sp)
         sw      $s6, 24($sp)
@@ -211,7 +214,7 @@ desenhar_tabuleiro:
         sw      $s1, 4($sp)
         sw      $s0, 0($sp)
         
-        # desenhar linhas
+        # desenhar linhas inicio
         li	$v0, 4	
 	la	$a0, tabuleiro_topo
 	syscall	
@@ -220,7 +223,7 @@ desenhar_tabuleiro:
 	la	$a0, margem_vertical
 	syscall
 	
-
+	# desenhar linha 0
 	li	$v0, 4	
 	la	$a0, linha_0
 	syscall
@@ -238,7 +241,7 @@ desenhar_tabuleiro:
 	la	$a0, espaco
 	syscall
 	
-
+	# desenhar linha 1
 	li	$v0, 4	
 	la	$a0, linha_1
 	syscall
@@ -256,7 +259,8 @@ desenhar_tabuleiro:
 	la	$a0, margem_horizontal
 	syscall
 	
-
+	
+	# desenhar linha 2
 	li	$v0, 4	
 	la	$a0, linha_2
 	syscall
@@ -286,7 +290,7 @@ desenhar_tabuleiro:
 	la	$a0, tabuleiro_fim
 	syscall
 	
-
+	# desenhar linha 3
 	li	$v0, 4	
 	la	$a0, linha_3
 	syscall
@@ -316,7 +320,7 @@ desenhar_tabuleiro:
 	la	$a0, tabuleiro_fim
 	syscall
 	
-	
+	# desenhar linha 4
 	li	$v0, 4
 	la	$a0, linha_4
 	syscall
@@ -346,7 +350,7 @@ desenhar_tabuleiro:
 	la	$a0, tabuleiro_fim
 	syscall
 	
-	
+	# desenhar linha 5
 	li	$v0, 4	
 	la	$a0, linha_5
 	syscall
@@ -364,7 +368,7 @@ desenhar_tabuleiro:
 	la	$a0, margem_horizontal
 	syscall
 	
-	
+	# desenhar linha 6
 	li	$v0, 4	
 	la	$a0, linha_6
 	syscall
@@ -382,7 +386,7 @@ desenhar_tabuleiro:
 	la	$a0, espaco
 	syscall
 	
-	
+	#fim
 	li	$v0, 4	
 	la	$a0, margem_vertical
 	syscall
