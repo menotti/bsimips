@@ -71,15 +71,21 @@ print_string:
 
 #Subrotina para imprimir no cmapo a posição da letra
 print_achou:
-
+		li $t9, 0		#considerar como vitória
 	loopc:	beq $3, $t7, exitloopc  #while enquanto $3 != $t7
 		lw $t1, ($a0)		#Imprimir o valores do Campo
 		li $v0, 4
 		syscall
+		beq $t1, 64, FaltaLetra
 		addi $a0, $a0, 4	#incremento 
 		addi $3, $3, 1		#contador do loop
 		j loopc			#loop
-		
+	
+	FaltaLetra:
+		li $t9, 1		
+		addi $a0, $a0, 4	#incremento 
+		addi $3, $3, 1		#contador do loop
+		j loopc			#loop
 	exitloopc:
 		li $3, 0		#definir valor do registrador $3 -> 0
 		jr $ra
