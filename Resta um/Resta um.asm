@@ -88,7 +88,7 @@ alocacao_tabuleiro:
 	# Preparar para loops
 	li	$s2, 7 		# Largura do tabuleiro
 	
-	li	$s0, 0 Linha atual
+	li	$s0, 0 		# Linha atual
 
 loop:
 	# Repetidção para próxima linha enquanto linha for menor que largura do tabuleiro.
@@ -390,4 +390,6 @@ desenhar_tabuleiro:
 	li	$v0, 4	
 	la	$a0, margem_vertical
 	syscall
+	
+
 	
