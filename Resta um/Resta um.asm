@@ -86,16 +86,16 @@ alocacao_tabuleiro:
         sw      $s0, 0($sp)
 
 	# Preparar para loops
-	li	$s2, 7 		#Largura do tabuleiro
+	li	$s2, 7 		# Largura do tabuleiro
 	
-	li	$s0, 0		#Linha atual
+	li	$s0, 0 Linha atual
 
 loop:
 	# Repetidção para próxima linha enquanto linha for menor que largura do tabuleiro.
 	slt 	$t0, $s0, $s2				
 	beq	$t0, $zero,  desenho_tabuleiro	#retornar
 
-	li	$s1, 0		#Coluna atual
+	li	$s1, 0		# Coluna atual
 loop1:
 	# Repetidção para próxima coluna enquanto coluna for menor que largura do tabuleiro.
 	slt	$t0, $s1, $s2				
@@ -115,12 +115,12 @@ loop1:
 	
 loop2:
 	# loop interno
-	addi	$s1, $s1, 1		#Coluna atual++
+	addi	$s1, $s1, 1		# Coluna atual++
 	j 	loop1	
 	
 loop3:
 	#loop externo
-	addi	$s0, $s0, 1		#Linha atual++
+	addi	$s0, $s0, 1		# Linha atual++
 	j	loop		
 desenho_tabuleiro:
         lw      $ra, 32($sp)   		# ler vetores do tabuleiro armazenados na memória
@@ -386,7 +386,7 @@ desenhar_tabuleiro:
 	la	$a0, espaco
 	syscall
 	
-	#fim
+	#fim do desenho
 	li	$v0, 4	
 	la	$a0, margem_vertical
 	syscall
