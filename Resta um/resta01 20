@@ -1,0 +1,160 @@
+.Kdata
+
+      L1:    .space 28
+      L2:    .space 28
+      L3:    .space 28
+      L4:    .space 28
+      L5:    .space 28
+      L6:    .space 28
+      L7:    .space 28
+
+      
+.data   
+     p:      .ascii "X"
+     fim:    .ascii "Fim do Jogo"
+     err:    .ascii "Jogada Invalida"
+     inicio: .ascii "Inicio da Jogo"
+     linha:  .ascii "Digite a linha "
+     col:    .ascii "Digite a Coluna "
+     plinha: .ascii "\n"
+   
+.macro imprimeLinha
+    li $v0, 4
+    la $a0, linha
+    syscall
+    sub $v0, $v0, $v0
+.end_macro
+
+.macro imprimeColuna
+    li $v0, 4
+    la $a0, col
+    syscall
+
+.end_macro
+    
+.macro inicio0(%linha)
+
+    .text
+                la $t0, %linha 
+        	li $t1, ' '		
+		sw $t1, ($t0)
+		li $t1, ' '		
+		sw $t1, 4($t0)
+		li $t1, 'o'				
+		sw $t1, 8($t0)
+        	li $t1, 'o'		
+		sw $t1, 8($t0)		
+                li $t1, 'o'		
+		sw $t1, 12($t0)
+		li $t1, 'o'		
+		sw $t1, 16($t0)
+.end_macro            
+         
+.macro inicio (%linha)
+
+    .text
+                la $t0, %linha 
+        	li $t1, 'o'		
+		sw $t1, ($t0)		
+		li $t1, 'o'		
+		sw $t1, 4($t0)		
+		li $t1, 'o'		
+		sw $t1, 8($t0)		
+                li $t1, 'o'		
+		sw $t1, 12($t0)
+		li $t1, 'o'		
+		sw $t1, 16($t0)
+		li $t1, 'o'		
+		sw $t1, 20($t0)
+		li $t1, 'o'		
+		sw $t1, 24($t0)
+
+ .end_macro
+
+.macro print(%pl)
+             
+          	la $t0, %pl
+		la $a0, ($t0)
+		li $v0, 4
+		syscall
+
+		la $a0, 4($t0)
+		li $v0, 4
+		syscall
+		
+		la $a0, 8($t0)
+		li $v0, 4
+		syscall
+		
+		la $a0, 12($t0)
+		li $v0, 4
+		syscall
+		
+		la $a0, 16($t0)
+		li $v0, 4
+		syscall
+	
+		la $a0, 20($t0)
+		li $v0, 4
+		syscall
+		
+	        la $a0, 24($t0)
+		li $v0, 4
+		syscall
+
+
+		
+.end_macro
+
+.macro pulalinha
+      la $a0, plinha
+      li $v0, 4
+      syscall
+      
+                    
+.end_macro
+
+
+.text
+
+main:
+    inicio0(L1)
+    inicio0(L2)
+    inicio(L3)
+    inicio(L4)
+    inicio(L5)
+    inicio0(L6)
+    inicio0(L7)
+    
+    la $t0, L4
+    li $t1, ' '		
+    sw $t1, 12($t0)
+    
+   
+    
+    print(L1)
+    pulalinha
+    print(L2)
+    pulalinha
+    print(L3)
+    pulalinha
+    print(L4)
+    pulalinha
+    print(L5)
+    pulalinha
+    print(L6)
+    pulalinha
+    print(L7)
+    pulalinha
+    pulalinha
+    
+    
+    imprimeLinha
+
+
+    
+
+
+     
+    
+    
