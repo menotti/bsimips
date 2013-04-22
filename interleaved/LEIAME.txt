@@ -1,1 +1,14 @@
-A FAZER
+Este é o arquivo "leia-me" da documentação do jogo BullsNCows.
+
+No presente momento, estamos realizando atualizações pontuais no jogo, e selecionando candidatos para o código final.
+
+
+
+BullsNCows
+
+
+Dado um número escolhido aleatoriamente, formado por quatro algarismos de 0 a 6, o jogador tem que advinhar os algarismos, inclusive sua sequência, que formam este número.
+
+Este jogo lê o número de quatro dígitos digitado pelo usuário, retorna acertos “cows” (dígito certo na posição errada) e acertos “bulls” (dígito certo na posição certa), mantedo o histórico de tentativas do usuário na tela.
+
+Ao acertar o número secreto o jogador é declarado vencedor.
