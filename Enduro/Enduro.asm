@@ -5,18 +5,18 @@
 #			Cleber Augusto Borges	RA 483168
 #
 # -------------------------------------------------------------------------------------------------------
-#				INTRU??ES DE USO
+#				INTRUCOES DE USO
 #
 # Para executar o jogo Enduro adequandamente, execute os seguintes passos:
-# - Fa?a o Assemble do programa, atrav?s do Menu 'Run/Assembly'
-# - Abra a ferramenta 'Bitmap Display' atrav?s do menu 'Tools'
-# - Nesta ferramente insira os seguintes par?metros: Display Width = 256 ; Display Height = 256 ; Base address = 0x10008000 ($gp)
+# - Faca o Assemble (F3) do programa, atraves do Menu 'Run/Assemble'
+# - Abra a ferramenta 'Bitmap Display' atraves do menu 'Tools'
+# - Nesta ferramente insira os seguintes parametros: Display Width = 256 ; Display Height = 256 ; Base address = 0x10008000 ($gp)
 # - Clique em 'Connect to MIPS'
-# - Abra a ferramenta 'Keyboard and Display MMIO Simulator' atrav?s do menu 'Tools'
+# - Abra a ferramenta 'Keyboard and Display MMIO Simulator' atraves do menu 'Tools'
 # - Clique em 'Connect to MIPS'
 # - No menu 'Run", clique em 'Go' para iniciar o programa
-# - Atrav?s do campo 'Keyboard' na ferramenta 'Keyboard and Display MMIO Simulator', utilize as teclas 'a,s,d,w' para movimentar o carro
-# - Atrav?s da tecla 'p' ? poss?vel para a execu??o do programa
+# - Atraves do campo 'Keyboard' na ferramenta 'Keyboard and Display MMIO Simulator', utilize as teclas 'a,s,d,w' para movimentar o carro
+# - Atraves da tecla 'p' eh possivel para a execucao do programa
 #
 # -------------------------------------------------------------------------------------------------------
 #				DESCRI??O DO PROGRAMA
@@ -32,7 +32,7 @@
 #	$s1 - Auxiliar para detecao de colisao
 #	$s2
 #	$s3 - Registrado para guardar batidas
-#	$s4 - Registro que guarda pontua??o
+#	$s4 - Registro que guarda pontuacao
 #	$s6 - contador linhas
 #	$s5 - contador colunas
 #	$s7 - Registrador que guarda cor usada
@@ -48,6 +48,8 @@
 #	$t8 - Registro para determinar limites laterais do carro principal
 #	$t9 - Posicao do Carro Adversario 5
 
+.include	"numeros.asm"
+
 .data
 Cor:		.word	0x00FF0000		# Escolhe a cor do jogo
 Cor2:		.word	0x00FF00FF
@@ -58,11 +60,20 @@ MemAdv2	:	.word	0x00006180
 MemAdv3	:	.word	0x000061E0
 MemAdv4	:	.word	0x00006240
 MemAdv5	:	.word	0x000062A0
+Digito1:	.word	0x0003BAA0
 
 .text
 #--------------------------------------------------------------------------------
 		# Rotina preliminar para carregar dados e graficos preliminares
 Main:
+		lw 	$s7, Cor
+		or	$a0, $zero, $s7	
+		lw	$a2, Digito1
+		add	$a2, $gp, $a2		# Inicia posicao do carro principal
+		or	$a1, $zero, $a2	
+		
+		Print1#($a1, $a0)
+		
 		lw	$a2, MemCarro
 		add	$a2, $gp, $a2		# Inicia posicao do carro principal
 		lw 	$s7, Cor		# Guarda cor em s7
@@ -489,7 +500,7 @@ PrintPista:
 		or	$a1, $zero, $a3		# Grava posicao memoria em a1
 		
 		li	$s6, 2			# Inicia contador de coluna
-		li 	$s5, 224		# Inicia contador de Linha
+		li 	$s5, 218		# Inicia contador de Linha
 PistaLoop1:
 		sw	$a0,($a1)		# Grava preto na memoria
 		add	$a1, $a1, 4		# Proxima coluna
@@ -506,7 +517,7 @@ PistaLoop1:
 		or	$a1, $zero, $a3		# Grava posicao memoria em a1
 		
 		li	$s6, 2			# Inicia contador de coluna
-		li 	$s5, 224		# Inicia contador de Linha
+		li 	$s5, 218		# Inicia contador de Linha
 PistaLoop2:
 		sw	$a0,($a1)		# Grava preto na memoria
 		add	$a1, $a1, 4		# Proxima coluna
@@ -540,7 +551,7 @@ MargSupLoop:
 		or	$a1, $zero, $a3		# Grava posicao memoria em a1
 		
 		li	$s6, 2			# Inicia contador de coluna
-		li 	$s5, 224		# Inicia contador de Linha
+		li 	$s5, 218		# Inicia contador de Linha
 MargDirLoop:
 		sw	$a0,($a1)		# Grava preto na memoria
 		add	$a1, $a1, 4		# Proxima coluna
@@ -553,7 +564,7 @@ MargDirLoop:
 		nop
 		
 		# Margem Inferior
-		add	$a3, $gp, 245824	# Posicionao ponteiro de memoria para local da pista
+		add	$a3, $gp, 238656	# Posicionao ponteiro de memoria para local da pista 245824
 		or	$a1, $zero, $a3		# Grava posicao memoria em a1
 		
 		li	$s6, 226		# Inicia contador de coluna
@@ -574,7 +585,7 @@ MargInfLoop:
 		or	$a1, $zero, $a3		# Grava posicao memoria em a1
 		
 		li	$s6, 2			# Inicia contador de coluna
-		li 	$s5, 224		# Inicia contador de Linha
+		li 	$s5, 218		# Inicia contador de Linha
 MargEsqLoop:
 		sw	$a0,($a1)		# Grava preto na memoria
 		add	$a1, $a1, 4		# Proxima coluna
