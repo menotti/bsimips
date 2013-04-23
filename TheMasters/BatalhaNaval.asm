@@ -1197,7 +1197,7 @@ TelaInicial:	# tela inicial do jogo
 			ExibeInteiro($t6)
 			ExibeMensagem("\tNavios restantes:  ")					# Exibe os navios restantes
 			ExibeInteiro($s0)
-			ExibeMensagem("\tChances restantes restantes:  ")			# Exibe os navios restantes
+			ExibeMensagem("\tChances restantes:  ")					# Exibe os navios restantes
 			ExibeInteiro($t7)
 			
 			ExibeMensagem("\n")							# quebra de linha
