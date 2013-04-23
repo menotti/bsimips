@@ -1179,10 +1179,7 @@ TelaInicial:	# tela inicial do jogo
 		FixarConfiguracaoJogo								# seleciona o modo de configuração do jogo
 			
 		
-		ExecucaoCorrenteDoJogo:
-		
-			beqz $t7, GameOver							# salta para o GameOver
-		   	beq $t6, $t5, Vitoria							# Salta para a vitória		   	
+		ExecucaoCorrenteDoJogo:					   	
 			
 			QuebraDeEspaco								# quebra de espaço
 			
@@ -1190,6 +1187,9 @@ TelaInicial:	# tela inicial do jogo
 			lw $t6, acertos								# quantidade de acertos
 			lw $t7, chances_restantes						# chances restantes	
 			sub $s0, $t5, $t6							# grava o totalde elementos que restam no quadro
+			
+			beqz $t7, GameOver							# salta para o GameOver
+		   	beq $t6, $t5, Vitoria							# Salta para a vitória
 			
 			ExibeMensagem("\nTotal elementos: ")					# Exibe o total de elementos
 			ExibeInteiro($t5)							
