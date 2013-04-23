@@ -11,7 +11,8 @@
       teccol:  .word                                          #Cria a Variável para guardar o que o usuário digita para coluna 
       ponto:   .space 128                                     #Cria um espaço na memória para guardar a pontuação que no máximo será 32 pontos                                    
       tecNome: .space 40                                      #Cria um array para guardar o nome do jogador
-      
+      glinha:  .space 10                                      # Variavel para guardar a linha
+      gcol:     .space 10                                      # Variavel para guardar a coluna digitada
       
                                                             #abaixo segue as frases utilizadas durante o jogo
       fim:    .ascii "Fim do Jogo"                          
@@ -127,8 +128,6 @@
 # programa principal
 .text
 
-jogo: 
-
     
 main:
     inicio0(L1)                                                     # Chama a macro para inserir a variável   
@@ -158,17 +157,61 @@ main:
     print(L7)
     pulalinha
     pulalinha
+   
     
-    imprimeLinha
+Jinicio:
+ 
+    imprimeLinha         
     
-    li $v0, 5
+    li $v0, 5                                             # Macro para solicitar ao usuário a linha que deseja consultar      
     syscall
-    sw $v0, teclin
+    sw $v0, teclin                 
     
-    imprimeColuna
+    imprimeColuna                                            
     
-    li $v0, 5
-    syscall
+    li $v0, 5                      
+    syscall                                               # Macro para solicitar ao usuário a coluna que deseja consultar
     sw $v0, teccol
     
+    
+ verificaLinha:
+ 
+    sub  $t5, $t5, $t5
+    addi $t5, $t5, 2
+    sub  $t6, $t6, $t6
+    addi $t6, $t6, -2
+    lw   $t2, teclin                                         # Verificar erros
+    sub  $t3, $t3, $t3                                       # Limpar o registrador t3
+    addi $t4, $t3, teclin                                    # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
+    bne  $t4, $t5, verificaColuna                            # Se for igual irá verificar se a coluna irá movimentar
+    bne  $t4, $t6, verificaColuna                            # Se for -2 o usuário irá caminhar para esquerda do jogo.
+    
+    la $t0, err
+    li $v0, 4
+    syscall
+    j Jinicio
+    
+verificaColuna:
+  
+     sw $t2, glinha     
+     sub  $t5, $t5, $t5
+     addi $t5, $t5, 2
+     sub  $t6, $t6, $t6
+     addi $t6, $t6, -2
+     lw   $t2, teclin                                         # Verificar erros
+     sub  $t3, $t3, $t3                                       # Limpar o registrador t3
+     addi $t4, $t3, teccol                                    # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
+     bne  $t4, $t5, verificaEspaco                            # Se for igual irá verificar se não há erros de de digito fora do teclado
+     bne  $t4, $t5, verificaEspaco                            # Se for -2 o usuário irá cverificar se não há erros de de digito fora do teclado
+     
+ verificaEspaco:
+ 
+     sw $t2, gcol
+     sub $t2, $t2, $t2
+     sub $t3, $t3, $t3
+     addi $t2, $t2, 2
+     addi $t3, $t3, 2     
+         
+ 
+                                          
     
