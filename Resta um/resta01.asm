@@ -7,12 +7,12 @@
       L5:      .space 28                                      #Armazena a 1º Linha
       L6:      .space 28                                      #Armazena a 1º Linha
       L7:      .space 28                                      #Armazena a 1º Linha
-      teclin:  .word                                          #Cria a Variável para guardar o que o usuário digita para linha 
-      teccol:  .word                                          #Cria a Variável para guardar o que o usuário digita para coluna 
+      teclin:  .space 28                                      #Cria a Variável para guardar o que o usuário digita para linha 
+      teccol:  .space 28                                      #Cria a Variável para guardar o que o usuário digita para coluna 
       ponto:   .space 128                                     #Cria um espaço na memória para guardar a pontuação que no máximo será 32 pontos                                    
       tecNome: .space 40                                      #Cria um array para guardar o nome do jogador
-      glinha:  .space 10                                      # Variavel para guardar a linha
-      gcol:     .space 10                                      # Variavel para guardar a coluna digitada
+      glinha:  .space 28                                      # Variavel para guardar a linha
+      gcol:    .space 28                                      # Variavel para guardar a coluna digitada
       
                                                             #abaixo segue as frases utilizadas durante o jogo
       fim:    .ascii "Fim do Jogo"                          
@@ -182,7 +182,7 @@ Jinicio:
     addi $t6, $t6, -2
     lw   $t2, teclin                                         # Verificar erros
     sub  $t3, $t3, $t3                                       # Limpar o registrador t3
-    addi $t4, $t3, teclin                                    # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
+    add  $t4, $t3, $t2                                       # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
     bne  $t4, $t5, verificaColuna                            # Se for igual irá verificar se a coluna irá movimentar
     bne  $t4, $t6, verificaColuna                            # Se for -2 o usuário irá caminhar para esquerda do jogo.
     
@@ -193,14 +193,14 @@ Jinicio:
     
 verificaColuna:
   
-     sw $t2, glinha     
+     sw   $t2, glinha     
      sub  $t5, $t5, $t5
      addi $t5, $t5, 2
      sub  $t6, $t6, $t6
      addi $t6, $t6, -2
-     lw   $t2, teclin                                         # Verificar erros
+     lw   $t2, teccol                                         # Verificar erros
      sub  $t3, $t3, $t3                                       # Limpar o registrador t3
-     addi $t4, $t3, teccol                                    # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
+     add  $t4, $t3, $t2                                    # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
      bne  $t4, $t5, verificaEspaco                            # Se for igual irá verificar se não há erros de de digito fora do teclado
      bne  $t4, $t5, verificaEspaco                            # Se for -2 o usuário irá cverificar se não há erros de de digito fora do teclado
      
