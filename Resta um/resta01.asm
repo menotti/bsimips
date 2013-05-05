@@ -1,14 +1,16 @@
 .kdata
 
       L1:      .space 28                                      #Armazena a 1º Linha
-      L2:      .space 28                                      #Armazena a 1º Linha
-      L3:      .space 28                                      #Armazena a 1º Linha 
-      L4:      .space 28                                      #Armazena a 1º Linha
-      L5:      .space 28                                      #Armazena a 1º Linha
-      L6:      .space 28                                      #Armazena a 1º Linha
-      L7:      .space 28                                      #Armazena a 1º Linha
+      L2:      .space 28                                      #Armazena a 2º Linha
+      L3:      .space 28                                      #Armazena a 3º Linha 
+      L4:      .space 28                                      #Armazena a 4º Linha
+      L5:      .space 28                                      #Armazena a 5º Linha
+      L6:      .space 28                                      #Armazena a 6º Linha
+      L7:      .space 28                                      #Armazena a 7º Linha
       teclin:  .space 28                                      #Cria a Variável para guardar o que o usuário digita para linha 
       teccol:  .space 28                                      #Cria a Variável para guardar o que o usuário digita para coluna 
+      tlin:    .space 28				      
+      tcol:     .space 28
       ponto:   .space 128                                     #Cria um espaço na memória para guardar a pontuação que no máximo será 32 pontos                                    
       tecNome: .space 40                                      #Cria um array para guardar o nome do jogador
       glinha:  .space 28                                      # Variavel para guardar a linha
@@ -36,6 +38,24 @@
 .macro imprimeColuna
     .data
       msgc:   .asciiz "Digite a coluna que deseja movimentar"               #Mensagem que será impressa na chamada do SO
+   .text    
+    la $a0, msgc                                                            #Mensagem que será impressa na chamada do SO
+    li $v0, 4
+    syscall
+.end_macro
+
+.macro impLinha
+.data
+      msg:   .asciiz "Digite a linha para onde deseja movimentar"                 #Mensagem que será impressa na chamada do SO
+   .text    
+   li $v0, 4
+   la $a0, msg                                                              #Mensagem que será impressa na chamada do SO
+   syscall
+.end_macro
+
+.macro impColuna
+    .data
+      msgc:   .asciiz "Digite a coluna para onde deseja movimentar"               #Mensagem que será impressa na chamada do SO
    .text    
     la $a0, msgc                                                            #Mensagem que será impressa na chamada do SO
     li $v0, 4
@@ -173,6 +193,19 @@ Jinicio:
     syscall                                               # Macro para solicitar ao usuário a coluna que deseja consultar
     sw $v0, teccol
     
+ 
+    impLinha         
+    
+    li $v0, 5                                             # Macro para solicitar ao usuário a linha que deseja consultar      
+    syscall
+    sw $v0, tlin                 
+    
+    impColuna                                            
+    
+    li $v0, 5                      
+    syscall                                               # Macro para solicitar ao usuário a coluna que deseja consultar
+    sw $v0, tcol
+    
     
  verificaLinha:
  
@@ -181,11 +214,12 @@ Jinicio:
     sub  $t6, $t6, $t6
     addi $t6, $t6, -2
     lw   $t2, teclin                                         # Verificar erros
-    sub  $t3, $t3, $t3                                       # Limpar o registrador t3
-    add  $t4, $t3, $t2                                       # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
-    bne  $t4, $t5, verificaColuna                            # Se for igual irá verificar se a coluna irá movimentar
-    bne  $t4, $t6, verificaColuna                            # Se for -2 o usuário irá caminhar para esquerda do jogo.
+    lw   $t3, tlin 
+    sub  $t4, $t3, $t2                                       # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
+    beq  $t4, $t5, verificaColuna                            # Se for igual irá verificar se a coluna irá movimentar
+    beq  $t4, $t6, verificaColuna                            # Se for -2 o usuário irá caminhar para esquerda do jogo.
     
+     
     la $t0, err
     li $v0, 4
     syscall
@@ -199,10 +233,11 @@ verificaColuna:
      sub  $t6, $t6, $t6
      addi $t6, $t6, -2
      lw   $t2, teccol                                         # Verificar erros
-     sub  $t3, $t3, $t3                                       # Limpar o registrador t3
-     add  $t4, $t3, $t2                                    # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
-     bne  $t4, $t5, verificaEspaco                            # Se for igual irá verificar se não há erros de de digito fora do teclado
-     bne  $t4, $t5, verificaEspaco                            # Se for -2 o usuário irá cverificar se não há erros de de digito fora do teclado
+     lw   $t3, tcol
+                                      # Limpar o registrador t3
+     sub  $t4, $t3, $t2                                    # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
+     beq  $t4, $t5, verificaEspaco                            # Se for igual irá verificar se não há erros de de digito fora do teclado
+     beq  $t4, $t5, verificaEspaco                            # Se for -2 o usuário irá cverificar se não há erros de de digito fora do teclado
      
  verificaEspaco:
  
@@ -210,7 +245,7 @@ verificaColuna:
      sub $t2, $t2, $t2
      sub $t3, $t3, $t3
      addi $t2, $t2, 2
-     addi $t3, $t3, 2     
+     addi $t3, $t3, 2   
          
  
                                           
