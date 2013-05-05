@@ -7,10 +7,10 @@
       L5:      .space 28                                      #Armazena a 5º Linha
       L6:      .space 28                                      #Armazena a 6º Linha
       L7:      .space 28                                      #Armazena a 7º Linha
-      teclin:  .space 28                                      #Cria a Variável para guardar o que o usuário digita para linha 
-      teccol:  .space 28                                      #Cria a Variável para guardar o que o usuário digita para coluna 
-      tlin:    .space 28				      
-      tcol:     .space 28
+      teclin:  .space 28                                      #Cria a Variável para guardar o que o usuário digita para linha atual
+      teccol:  .space 28                                      #Cria a Variável para guardar o que o usuário digita para coluna atual
+      tlin:    .space 28				      #Cria a Variável para guardar o que o usuário digita para linha destino
+      tcol:    .space 28				      #Cria a Variável para guardar o que o usuário digita para coluna destino
       ponto:   .space 128                                     #Cria um espaço na memória para guardar a pontuação que no máximo será 32 pontos                                    
       tecNome: .space 40                                      #Cria um array para guardar o nome do jogador
       glinha:  .space 28                                      # Variavel para guardar a linha
@@ -26,6 +26,15 @@
       plinha: .ascii "\n"
       
  #Macro para imprimir a linha que o usuário deseja movimentar 
+.macro errou
+.data
+      msg:   .asciiz "Jogada Inválida \n"                                   #Mensagem que será impressa na chamada do SO
+   .text    
+   li $v0, 4
+   la $a0, msg                                                              #Mensagem que será impressa na chamada do SO
+   syscall
+.end_macro
+
 .macro imprimeLinha
 .data
       msg:   .asciiz "Digite a linha que deseja movimentar"                 #Mensagem que será impressa na chamada do SO
@@ -46,7 +55,7 @@
 
 .macro impLinha
 .data
-      msg:   .asciiz "Digite a linha para onde deseja movimentar"                 #Mensagem que será impressa na chamada do SO
+      msg:   .asciiz "Digite a linha para onde deseja movimentar"           #Mensagem que será impressa na chamada do SO
    .text    
    li $v0, 4
    la $a0, msg                                                              #Mensagem que será impressa na chamada do SO
@@ -55,7 +64,7 @@
 
 .macro impColuna
     .data
-      msgc:   .asciiz "Digite a coluna para onde deseja movimentar"               #Mensagem que será impressa na chamada do SO
+      msgc:   .asciiz "Digite a coluna para onde deseja movimentar"         #Mensagem que será impressa na chamada do SO
    .text    
     la $a0, msgc                                                            #Mensagem que será impressa na chamada do SO
     li $v0, 4
@@ -218,13 +227,20 @@ Jinicio:
     sub  $t4, $t3, $t2                                       # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
     beq  $t4, $t5, verificaColuna                            # Se for igual irá verificar se a coluna irá movimentar
     beq  $t4, $t6, verificaColuna                            # Se for -2 o usuário irá caminhar para esquerda do jogo.
+    blt $t4, $t5, erro					     #Se a subtração entre os valores digitados forem maiores que 2, mensagem de erro	
+    bgt $t4, $t6, erro					     #Se a subtração entre os valores digitados forem menores que -2, mensagem de erro	
+    blt $t4, $t6, erro					     #Se a subtração entre os valores digitados forem maiores que -2, mensagem de erro	
+    bgt $t4, $t5, erro					     #Se a subtração entre os valores digitados forem menores que 2, mensagem de erro
     
-     
-    la $t0, err
-    li $v0, 4
-    syscall
     j Jinicio
+    syscall
+   
     
+       
+    
+erro:
+	errou
+        
 verificaColuna:
   
      sw   $t2, glinha     
@@ -234,10 +250,17 @@ verificaColuna:
      addi $t6, $t6, -2
      lw   $t2, teccol                                         # Verificar erros
      lw   $t3, tcol
-                                      # Limpar o registrador t3
-     sub  $t4, $t3, $t2                                    # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
+     sub  $t4, $t3, $t2                                       # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
      beq  $t4, $t5, verificaEspaco                            # Se for igual irá verificar se não há erros de de digito fora do teclado
      beq  $t4, $t5, verificaEspaco                            # Se for -2 o usuário irá cverificar se não há erros de de digito fora do teclado
+     blt $t4, $t5, erro1			              #Se a subtração entre os valores digitados forem maiores que 2, mensagem de erro	
+     bgt $t4, $t6, erro1				      #Se a subtração entre os valores digitados forem menores que -2, mensagem de erro
+     blt $t4, $t6, erro1			              #Se a subtração entre os valores digitados forem maiores que -2, mensagem de erro	
+     bgt $t4, $t5, erro1			              #Se a subtração entre os valores digitados forem mneores que 2, mensagem de erro                                 	                                               
+     j Jinicio
+     
+erro1:
+	errou
      
  verificaEspaco:
  
@@ -246,7 +269,7 @@ verificaColuna:
      sub $t3, $t3, $t3
      addi $t2, $t2, 2
      addi $t3, $t3, 2   
-         
+     j Jinicio    
  
                                           
     
