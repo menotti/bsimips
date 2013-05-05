@@ -187,7 +187,7 @@ main:
     pulalinha
     pulalinha
    
-    
+        
 Jinicio:
  
     imprimeLinha         
@@ -215,7 +215,6 @@ Jinicio:
     syscall                                               # Macro para solicitar ao usuário a coluna que deseja consultar
     sw $v0, tcol
     
-    
  verificaLinha:
  
     sub  $t5, $t5, $t5
@@ -234,10 +233,7 @@ Jinicio:
     
     j Jinicio
     syscall
-   
-    
-       
-    
+
 erro:
 	errou
         
@@ -252,16 +248,17 @@ verificaColuna:
      lw   $t3, tcol
      sub  $t4, $t3, $t2                                       # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
      beq  $t4, $t5, verificaEspaco                            # Se for igual irá verificar se não há erros de de digito fora do teclado
-     beq  $t4, $t5, verificaEspaco                            # Se for -2 o usuário irá cverificar se não há erros de de digito fora do teclado
+     beq  $t4, $t6, verificaEspaco                            # Se for -2 o usuário irá cverificar se não há erros de de digito fora do teclado
      blt $t4, $t5, erro1			              #Se a subtração entre os valores digitados forem maiores que 2, mensagem de erro	
      bgt $t4, $t6, erro1				      #Se a subtração entre os valores digitados forem menores que -2, mensagem de erro
      blt $t4, $t6, erro1			              #Se a subtração entre os valores digitados forem maiores que -2, mensagem de erro	
-     bgt $t4, $t5, erro1			              #Se a subtração entre os valores digitados forem mneores que 2, mensagem de erro                                 	                                               
+     bgt $t4, $t5, erro1			              #Se a subtração entre os valores digitados forem menores que 2, mensagem de erro                                 	                                               
      j Jinicio
      
 erro1:
 	errou
-     
+
+          
  verificaEspaco:
  
      sw $t2, gcol
