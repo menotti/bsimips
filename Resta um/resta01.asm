@@ -214,21 +214,7 @@ Jinicio:
     li $v0, 5                      
     syscall                                               # Macro para solicitar ao usuário a coluna que deseja consultar
     sw $v0, tcol
-    
- verifica:
- 
-    	lw $t2, teclin
-    	lw $t3, teccol
-    	beq $t2, 1, ver
-    	ver: beq, $t3, 1, erro
-
-verifica1:
- 
-    	lw $t2, teclin
-    	lw $t3, teccol
-    	beq $t2, 1, ver1
-    	ver1: beq, $t3, 2, erro   	    	
-	
+   	
  verificaLinha:
  
     sub  $t5, $t5, $t5
@@ -248,8 +234,9 @@ verifica1:
     j Jinicio
     syscall
 
-erro:
-	addi $t2, $t0, 1
+erro:	
+	sub $t2, $t2, $t2							    	
+	addi $t2, $t0, 1				     # Se existir erro na movimentação da linha soma 1
 	        
 verificaColuna:
   
@@ -269,15 +256,16 @@ verificaColuna:
      bgt $t4, $t5, erro1			              #Se a subtração entre os valores digitados forem menores que 2, mensagem de erro                                 	                                               
      j Jinicio
      
-erro1:
-     addi $t9, $t2, 1
-     beq $t9, 2, erro2
+erro1:	
+						              # Verifica a movimentação de linha e coluna
+     sub $t3, $t3, $t3				              
+     addi $t3, $t2, 1					      # Se existir erro na movimentação da coluna soma 1	
+     beq $t3, 2, erro2					      # Se o erro for em ambas, ou seja, coluna e linha, o resultado será 2, e exibirá a mensagem de jogada inválida	
      
-erro2: 
+erro2: 							      # Exibe a mensagem de jogada inválida
 	errou 
 	         
-	           
- verificaEspaco:
+verificaEspaco:
  
      sw $t2, gcol
      sub $t2, $t2, $t2
