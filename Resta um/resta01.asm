@@ -215,6 +215,20 @@ Jinicio:
     syscall                                               # Macro para solicitar ao usuário a coluna que deseja consultar
     sw $v0, tcol
     
+ verifica:
+ 
+    	lw $t2, teclin
+    	lw $t3, teccol
+    	beq $t2, 1, ver
+    	ver: beq, $t3, 1, erro
+
+verifica1:
+ 
+    	lw $t2, teclin
+    	lw $t3, teccol
+    	beq $t2, 1, ver1
+    	ver1: beq, $t3, 2, erro   	    	
+	
  verificaLinha:
  
     sub  $t5, $t5, $t5
@@ -235,8 +249,8 @@ Jinicio:
     syscall
 
 erro:
-	errou
-        
+	addi $t2, $t0, 1
+	        
 verificaColuna:
   
      sw   $t2, glinha     
@@ -256,9 +270,13 @@ verificaColuna:
      j Jinicio
      
 erro1:
-	errou
-
-          
+     addi $t9, $t2, 1
+     beq $t9, 2, erro2
+     
+erro2: 
+	errou 
+	         
+	           
  verificaEspaco:
  
      sw $t2, gcol
