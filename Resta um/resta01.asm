@@ -230,7 +230,8 @@ Jinicio:
     bgt $t4, $t6, erro					     #Se a subtração entre os valores digitados forem menores que -2, mensagem de erro	
     blt $t4, $t6, erro					     #Se a subtração entre os valores digitados forem maiores que -2, mensagem de erro	
     bgt $t4, $t5, erro					     #Se a subtração entre os valores digitados forem menores que 2, mensagem de erro
-    
+    bgt $t2, 7, erro					     #Se o valor digitado para linha atual for maior que 7 aparece mensagem de erro	
+    bgt $t2, 7, erro					     #Se o valor digitado para linha destino for maior que 7 aparece mensagem de erro
     j Jinicio
     syscall
 
@@ -254,6 +255,9 @@ verificaColuna:
      bgt $t4, $t6, erro1				      #Se a subtração entre os valores digitados forem menores que -2, mensagem de erro
      blt $t4, $t6, erro1			              #Se a subtração entre os valores digitados forem maiores que -2, mensagem de erro	
      bgt $t4, $t5, erro1			              #Se a subtração entre os valores digitados forem menores que 2, mensagem de erro                                 	                                               
+     bgt $t2, 7, erro					      #Se o valor digitado para coluna atual for maior que 7 aparece mensagem de erro
+     bgt $t2, 7, erro					      #Se o valor digitado para coluna destino for maior que 7 aparece mensagem de erro
+     
      j Jinicio
      
 erro1:	
