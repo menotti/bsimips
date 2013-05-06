@@ -36,13 +36,12 @@ main:
 	syscall
 	
 	la $a0, msg_jog_1
+	move $s4, $s1
 	
 L:
 	#Mensagem informando a vez do jogador.
 	li $v0, 4
 	syscall
-	
-	move $s4, $s1
 	
 M:	
 	#Mensagem solicitando a escolha de um quadrado do tabuleiro
@@ -83,30 +82,107 @@ continue:
 	sub $s5, $s5, 1
 	
 	bnez $s5, L
+	
+	la $a0, msg_empate
+	li $v0, 4
+	syscall
+	
+	b exit
 		
 pos_11:
+	
 	bnez $t0, campo_ja_ecolhido
 	add $t0, $t0, $s4
+
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na horizontal
 	seq $t8, $t1, $s4
 	seq $t9, $t2, $s4
 	and $s7, $t8, $t9
 	bnez $s7, msg_ganhou
+	
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na vertical	
+	seq $t8, $t3, $s4
+	seq $t9, $t6, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na diagonal	
+	seq $t8, $t4, $s4
+	seq $t9, $s0, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+	
 	b volta
 
 pos_12:
 	bnez $t1, campo_ja_ecolhido
 	add $t1, $t1, $s4
+	
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na horizontal
 	seq $t8, $t0, $s4
 	seq $t9, $t2, $s4
 	and $s7, $t8, $t9
 	bnez $s7, msg_ganhou
+
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na vertical	
+	seq $t8, $t4, $s4
+	seq $t9, $t7, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+	
 	b volta
 
 pos_13:
 	bnez $t2, campo_ja_ecolhido
 	add $t2, $t2, $s4
+
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na horizontal
 	seq $t8, $t1, $s4
 	seq $t9, $t0, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na vertical	
+	seq $t8, $t5, $s4
+	seq $t9, $s0, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na diagonal	
+	seq $t8, $t4, $s4
+	seq $t9, $t6, $s4
 	and $s7, $t8, $t9
 	bnez $s7, msg_ganhou
 
@@ -115,8 +191,24 @@ pos_13:
 pos_21:
 	bnez $t3, campo_ja_ecolhido
 	add $t3, $t3, $s4
+	
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na horizontal
 	seq $t8, $t4, $s4
 	seq $t9, $t5, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na vertical	
+	seq $t8, $t0, $s4
+	seq $t9, $t6, $s4
 	and $s7, $t8, $t9
 	bnez $s7, msg_ganhou
 
@@ -125,46 +217,181 @@ pos_21:
 pos_22:
 	bnez $t4, campo_ja_ecolhido
 	add $t4, $t4, $s4
+
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na horizontal
 	seq $t8, $t3, $s4
 	seq $t9, $t5, $s4
 	and $s7, $t8, $t9
 	bnez $s7, msg_ganhou
+	
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na vertical	
+	seq $t8, $t1, $s4
+	seq $t9, $t7, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na primeira diagonal
+	seq $t8, $t0, $s4
+	seq $t9, $s0, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na segunda diagonal
+	seq $t8, $t2, $s4
+	seq $t9, $t6, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+
 	b volta
 
 pos_23:
 	bnez $t5, campo_ja_ecolhido
 	add $t5, $t5, $s4
+	
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na horizontal
 	seq $t8, $t3, $s4
 	seq $t9, $t4, $s4
 	and $s7, $t8, $t9
 	bnez $s7, msg_ganhou
+		
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na vertical	
+	seq $t8, $t2, $s4
+	seq $t9, $s0, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na diagonal
+	seq $t8, $t4, $s4
+	seq $t9, $t6, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+
 	b volta
 
 pos_31:
 	bnez $t6, campo_ja_ecolhido
 	add $t6, $t6, $s4
+	
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na horizontal
 	seq $t8, $t7, $s4
 	seq $t9, $s0, $s4
 	and $s7, $t8, $t9
 	bnez $s7, msg_ganhou
+			
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na vertical	
+	seq $t8, $t0, $s4
+	seq $t9, $t3, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na diagonal
+	seq $t8, $t2, $s4
+	seq $t9, $t4, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+
 	b volta
 
 pos_32:
 	bnez $t7, campo_ja_ecolhido
 	add $t7, $t6, $s4
+	
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na horizontal
 	seq $t8, $s0, $s4
 	seq $t9, $t2, $s4
 	and $s7, $t8, $t9
 	bnez $s7, msg_ganhou
+				
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na vertical	
+	seq $t8, $t1, $s4
+	seq $t9, $t4, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+
 	b volta
 
 pos_33:
 	bnez $s0, campo_ja_ecolhido
 	add $s0, $s0, $s4
+	
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na horizontal
 	seq $t8, $t6, $s4
 	seq $t9, $t7, $s4
 	and $s7, $t8, $t9
 	bnez $s7, msg_ganhou
+				
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na vertical	
+	seq $t8, $t2, $s4
+	seq $t9, $t5, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+			
+	move $t8, $zero
+	move $t9, $zero
+	move $s7, $zero
+	
+	#Verificando se o jogador ganhou na diagonal	
+	seq $t8, $t0, $s4
+	seq $t9, $t4, $s4
+	and $s7, $t8, $t9
+	bnez $s7, msg_ganhou
+
 	b volta
 
 vez_jogador2:
@@ -173,7 +400,15 @@ vez_jogador2:
 	b continue
 	
 msg_ganhou:
-	la $a0, msg_ganhou_jogo
+	beq $s4, $s2, jogador2_ganhou
+	
+	la $a0, msg_jogador1_ganhou
+	li $v0, 4
+	syscall
+	b exit
+
+jogador2_ganhou:
+	la $a0, msg_jogador2_ganhou
 	li $v0, 4
 	syscall
 	b exit
@@ -207,8 +442,14 @@ nova_linha:
 msg_campo_ja_ecolhido:
 	.asciiz "Campo já escolhido. Tente novamente.\n"
 	
-msg_ganhou_jogo:
-	.asciiz "Você ganhou o jogo."
+msg_jogador1_ganhou:
+	.asciiz "O jogador 1 ganhou o jogo."
+
+msg_jogador2_ganhou:
+	.asciiz "O jogador 2 ganhou o jogo."
 	
 msg_posicao_invalida:
 	.asciiz "Posicao invalida, tente novamente.\n"
+
+msg_empate:
+	.asciiz "O jogo deu velha. Os dois jogadores empataram."
