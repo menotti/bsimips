@@ -1,8 +1,5 @@
 Este é o arquivo "leia-me" da documentação do jogo BullsNCows.
 
-No presente momento, estamos realizando atualizações pontuais no jogo, e selecionando candidatos para o código final.
-
-
 
 BullsNCows
 
