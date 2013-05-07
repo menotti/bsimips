@@ -1,6 +1,16 @@
 .kdata
 
       L1:      .space 28                                      #Armazena a 1º Linha
+<<<<<<< .mine
+      L2:      .space 28                                      #Armazena a 1º Linha
+      L3:      .space 28                                      #Armazena a 1º Linha 
+      L4:      .space 28                                      #Armazena a 1º Linha
+      L5:      .space 28                                      #Armazena a 1º Linha
+      L6:      .space 28                                      #Armazena a 1º Linha
+      L7:      .space 28                                      #Armazena a 1º Linha
+      teclin:  .word                                          #Cria a Variável para guardar o que o usuário digita para linha 
+      teccol:  .word                                          #Cria a Variável para guardar o que o usuário digita para coluna 
+=======
       L2:      .space 28                                      #Armazena a 2º Linha
       L3:      .space 28                                      #Armazena a 3º Linha 
       L4:      .space 28                                      #Armazena a 4º Linha
@@ -11,12 +21,14 @@
       teccol:  .space 28                                      #Cria a Variável para guardar o que o usuário digita para coluna atual
       tlin:    .space 28				      #Cria a Variável para guardar o que o usuário digita para linha destino
       tcol:    .space 28				      #Cria a Variável para guardar o que o usuário digita para coluna destino
+>>>>>>> .r166
       ponto:   .space 128                                     #Cria um espaço na memória para guardar a pontuação que no máximo será 32 pontos                                    
       tecNome: .space 40                                      #Cria um array para guardar o nome do jogador
-      glinha:  .space 28                                      # Variavel para guardar a linha
-      gcol:    .space 28                                      # Variavel para guardar a coluna digitada
-      
-                                                            #abaixo segue as frases utilizadas durante o jogo
+      glinha:  .word                                          # Variavel para guardar a linha
+      gcol:    .word                                          # Variavel para guardar a coluna digitada
+     
+     
+                    #abaixo segue as frases utilizadas durante o jogo
       fim:    .ascii "Fim do Jogo"                          
       err:    .ascii "Jogada Invalida"
       inicio: .ascii "Inicio da Jogo"
@@ -147,16 +159,22 @@
 .end_macro
 
 #macro para pular linha
+
 .macro pulalinha
       la $a0, plinha
       li $v0, 4
       syscall      
 .end_macro
 
-
 # programa principal
 .text
-
+.macro erro(%err)
+     
+    la $t0, err
+    li $v0, 4
+    syscall
+    
+.end_macro
     
 main:
     inicio0(L1)                                                     # Chama a macro para inserir a variável   
@@ -192,19 +210,91 @@ Jinicio:
  
     imprimeLinha         
     
-    li $v0, 5                                             # Macro para solicitar ao usuário a linha que deseja consultar      
+    li  $v0, 5                                               # Solicitar ao usuário a linha que deseja consultar      
     syscall
-    sw $v0, teclin                 
+    sw  $v0, teclin                 
     
     imprimeColuna                                            
     
     li $v0, 5                      
-    syscall                                               # Macro para solicitar ao usuário a coluna que deseja consultar
+    syscall                                                 # Macro para solicitar ao usuário a coluna que deseja consultar
     sw $v0, teccol
     
+<<<<<<< .mine
+    # verifica se o que o jogador digitou esta na regra do jogo
+=======
  
     impLinha         
+>>>>>>> .r166
     
+<<<<<<< .mine
+    lw    $t5, teclin
+    sub   $t3, $t3, $t3
+    addi  $t3, $t3, 3
+    sub   $t6, $t6, $t6
+    addi  $t6, $t6, 5
+    slt   $t2, $t3, $t5
+    slt   $t2, $t5, $t6
+    beqz  $t2, VerificaC
+    j jogos
+    
+VerificaC:    
+    lw    $t5, teccol
+    sub   $t3, $t3, $t3
+    addi  $t3, $t3, 3
+    sub   $t6, $t6, $t6
+    addi  $t6, $t6, 5
+    slt   $t2, $t3, $t5
+    slt   $t2, $t5, $t6
+    beqz  $t2, erro
+    j jogos
+    
+    
+    
+           # Solicitar ao usuário para onde a peça irá
+             
+
+jogos:
+   imprimeLinha         
+    
+    li $v0, 5       
+    syscall
+    sw $v0, glinha                 
+    
+    imprimeColuna                                            
+    
+    li $v0, 5                      
+    syscall                                                 
+    sw $v0, gcol
+    
+     lw   $t5, glinha
+    sub   $t3, $t3, $t3
+    addi  $t3, $t3, 3
+    sub   $t6, $t6, $t6
+    addi  $t6, $t6, 5
+    slt   $t2, $t3, $t5
+    slt   $t2, $t5, $t6
+    beqz  $t2, VerificaColuna
+    j verificaLinha
+    
+VerificaColuna:    
+    lw    $t5, gcol
+    sub   $t3, $t3, $t3
+    addi  $t3,$t3, 3
+    sub   $t6, $t6, $t6
+    addi  $t6,$t6, 5
+    slt   $t2, $t3, $t5
+    slt   $t2, $t5, $t6
+    beqz  $t2, erro
+    j verificaLinha
+    
+    
+erro: la $t0, err
+      li $v0, 4
+      syscall
+      j Jinicio
+    
+=======
     li $v0, 5                                             # Macro para solicitar ao usuário a linha que deseja consultar      
     syscall
     sw $v0, tlin                 
@@ -215,13 +305,23 @@ Jinicio:
     syscall                                               # Macro para solicitar ao usuário a coluna que deseja consultar
     sw $v0, tcol
    	
+>>>>>>> .r166
  verificaLinha:
- 
+    
     sub  $t5, $t5, $t5
     addi $t5, $t5, 2
     sub  $t6, $t6, $t6
     addi $t6, $t6, -2
-    lw   $t2, teclin                                         # Verificar erros
+    lw   $t2, glinha($0)                                     # Verificar erros
+<<<<<<< .mine
+    sub  $t3, $t3, $t3                                       # Limpar o registrador t3
+    add  $t3, $t3, $t2                                       # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
+    beq  $t3, $t5, verificaColuna                            # Se for igual irá verificar se a coluna irá movimentar
+    beq  $t4, $t6, verificaColuna                            # Se for -2 o usuário irá caminhar para esquerda do jogo.
+    
+    la $t0, err
+    li $v0, 4
+=======
     lw   $t3, tlin 
     sub  $t4, $t3, $t2                                       # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
     beq  $t4, $t5, verificaColuna                            # Se for igual irá verificar se a coluna irá movimentar
@@ -233,6 +333,7 @@ Jinicio:
     bgt $t2, 111, erro2					     #Se o valor digitado para linha atual for maior que 7 aparece mensagem de erro	
     bgt $t3, 111, erro2					     #Se o valor digitado para linha destino for maior que 7 aparece mensagem de erro
     j Jinicio
+>>>>>>> .r166
     syscall
 
 erro:	
@@ -241,12 +342,17 @@ erro:
 	        
 verificaColuna:
   
-     sw   $t2, glinha     
      sub  $t5, $t5, $t5
      addi $t5, $t5, 2
      sub  $t6, $t6, $t6
      addi $t6, $t6, -2
-     lw   $t2, teccol                                         # Verificar erros
+     lw   $t2, gcol                                         # Verificar erros
+<<<<<<< .mine
+     sub  $t3, $t3, $t3                                       # Limpar o registrador t3
+     add  $t4, $t3, $t2                                       # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
+     beq  $t4, $t5, verificaPosicao                           # Se for igual irá verificar se não há erros de de digito fora do teclado
+     beq  $t4, $t5, verificaPosicao                           # Se for -2 o usuário irá cverificar se não há erros de de digito fora do teclado
+=======
      lw   $t3, tcol
      sub  $t4, $t3, $t2                                       # Soma 0 com o valor digitado, se for igual a 2 o usuário que movimentar duas casas para frente 
      beq  $t4, $t5, verificaEspaco                            # Se for igual irá verificar se não há erros de de digito fora do teclado
@@ -257,7 +363,14 @@ verificaColuna:
      bgt $t4, $t5, erro1			              #Se a subtração entre os valores digitados forem menores que 2, mensagem de erro                                 	                                               
      bgt $t2, 111, erro2				      #Se o valor digitado para coluna atual for maior que 7 aparece mensagem de erro
      bgt $t3, 111, erro2				      #Se o valor digitado para coluna destino for maior que 7 aparece mensagem de erro
+>>>>>>> .r166
      
+<<<<<<< .mine
+     la $t0, err
+     li $v0, 4
+     syscall
+     j Jinicio
+=======
      j Jinicio
      
 erro1:	
@@ -270,13 +383,29 @@ erro2: 							      # Exibe a mensagem de jogada inválida
 	errou 
 	         
 verificaEspaco:
+>>>>>>> .r166
  
+<<<<<<< .mine
+=======
      sw $t2, gcol
      sub $t2, $t2, $t2
      sub $t3, $t3, $t3
      addi $t2, $t2, 2
      addi $t3, $t3, 2   
      j Jinicio    
+>>>>>>> .r166
  
+
+verificaPosicao:
+
+     la $t0, err
+     li $v0, 4
+     syscall
+     
+       
+     
+     
+
+       
                                           
     
