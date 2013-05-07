@@ -63,7 +63,9 @@
 		sw $t1, 16($t0)
 .end_macro            
 
-#Macro que inicia o vetor com espaço e 'o' pque são a peças do jogo nas linha com 7 peças         
+#Macro que inicia o vetor com espaço e 'o' pque são a peças do jogo nas linha com 7 peças
+# Variável passada como paramentro %linha indica a linha
+        
 .macro inicio (%linha)
 
     .text
@@ -86,6 +88,7 @@
  .end_macro
 
 # macro para imprimir o jogo na tela
+# Variável passada como paramentro %pl
 .macro print(%pl)
              
           	la $t0, %pl
@@ -136,23 +139,54 @@
     syscall
     
 .end_macro
-    
+       
+ #Macro que realiza o teste se a posição escolida não esta ocupada
+ #Não estando ocupada realiza a jogada
+   
+.macro muda(%colula, %coluna1, %Linha1, %Linha2)
+
+       sub  $t4, $t4, $t4                # Zera o registrador
+       addi $t4, $t4, 4                  # Adiciona 4 para mudar de posições do vetor
+       li   $s0, ' '                     
+       la   $t0, %colula
+       mul  $t0, $t0, $t4
+       la   $t1, %coluna1
+       mul  $t1, $t1, $t4
+       la   $t2, %Linha1
+       lw   $t2, ($t0)
+       la   $t3, %Linha2
+       lw   $t2, ($t1)
+          
+       bne  $t1, $s0, sair
+       move $t2, $t1                      # Move a peça da para outra posição
+       move $t1, $s0                      # Muda o valor para vazio
+       
+        
+sair: nop 
+ 
+.end_macro
+
+        
 main:
-    inicio0(L1)                                                     # Chama a macro para inserir a variável   
-    inicio0(L2)
-    inicio(L3)
-    inicio(L4)
-    inicio(L5)
-    inicio0(L6)
-    inicio0(L7)
+    inicio0(L1)                      # Chama a macro para inserir a variável   
+    inicio0(L2)                      # Chama a macro para inserir a variável 
+    inicio(L3)                       # Chama a macro para inserir a variável 
+    inicio(L4)                       # Chama a macro para inserir a variável 
+    inicio(L5)                       # Chama a macro para inserir a variável 
+    inicio0(L6)                      # Chama a macro para inserir a variável 
+    inicio0(L7)                      # Chama a macro para inserir a variável 
     
-    la $t0, L4
-    li $t1, ' '		
+    la $t0, L4                       # Deixa a linha X coluna 4X4 vazia 
+    li $t1, ' '		             # Condição da regra do jogo para iniciar
     sw $t1, 12($t0)
+    
+    # Imprime a tela do jogo
+    # Chamada do macro para imprimir o jogo (Print(L)) passando a linha como parametro
+    # Chamada da macro pulalinha que pula uma linha \n 
   
-    print(L1)
-    pulalinha
-    print(L2)
+    print(L1)                       
+    pulalinha                       
+    print(L2)                
     pulalinha
     print(L3)
     pulalinha
@@ -210,17 +244,17 @@ VerificaC:
              
 
 jogos:
-   imprimeLinha         
+    imprimeLinha         
     
     li $v0, 5       
     syscall
-    sw $v0, glinha                 
+    sw $v0, glinha             # Grava a linha digitada pelo o jogador           
     
     imprimeColuna                                            
     
     li $v0, 5                      
     syscall                                                 
-    sw $v0, gcol
+    sw $v0, gcol              # Grava a coluna digitada pelo o jogador 
     
      lw   $t5, glinha
     sub   $t3, $t3, $t3
@@ -229,8 +263,10 @@ jogos:
     addi  $t6, $t6, 5
     slt   $t2, $t3, $t5
     slt   $t2, $t5, $t6
-    beqz  $t2, VerificaColuna
-    j verificaLinha
+    beqz  $t2, VerificaColuna         
+    j verificaLinha                  # Caso seja digitado uma linha que não seja necessário verificar a coluna 
+    
+    #Verifica se a coluna onde o usuário irá jogar é valida a primeira escolha    
     
 VerificaColuna:    
     lw    $t5, gcol
@@ -241,15 +277,18 @@ VerificaColuna:
     slt   $t2, $t3, $t5
     slt   $t2, $t5, $t6
     beqz  $t2, erro
-    j verificaLinha
+    j verificaLinha       # Se a linha etiver correta irá verificar a linha
     
+    # Erro caso as regras do jogo tenha sido violada
     
 erro: la $t0, err
       li $v0, 4
       syscall
       j Jinicio
+      
+      #Verifica se a coluna onde o usuário irá jogar é valida a segunda escolha 
     
-verificaLinha:
+verificaLinha:  #Verifica se a linha escolida esta dentro das regras do jogo.
     
     lw   $t5, teclin
     lw   $t6, glinha
@@ -257,17 +296,19 @@ verificaLinha:
     subi $t4, $t2, 2
     beqz $t4, verificaColuna
     addi $t4, $t2, 2
-    subi $t1, $t1, $t1
+    sub  $t1, $t1, $t1
     addi $t1, $t1, 1
     sw   $t1, PassaL
     beqz $t4, verificaColuna
-     
-    la $t0, err
+    
+    # Erro caso as regras do jogo tenha sido violada
+    
+    la $t0, err  
     li $v0, 4
     syscall
     j Jinicio
     
-verificaColuna:
+verificaColuna:       #Verifica se a coluna escolida esta dentro das regras do jogo.
       
      lw   $t5, teccol
      lw   $t6, gcol
@@ -276,21 +317,41 @@ verificaColuna:
      beqz $t3, verificaPosicao
      addi $t3, $t2, 2
      sw   $t1, PassaC
-     beqz $t3, verificaPosicao
+     beqz $t3, verificaPosicao    # Todas as posições validas vrificar a posição
+     
+     # Erro caso as regras do jogo tenha sido violada
      
      la $t0, err
      li $v0, 4
      syscall
      j Jinicio
      
-
+#Verifica a posição se estiver vazia realiza a jogada
 verificaPosicao:
      
-     la $t5, 
+    muda(teccol, gcol, teclin, glinha)  # Chamada do macro muda para a realizar a jogada
+    
+    #Reimprime a tela
      
-       
-     
-     
+    print(L1)
+    pulalinha
+    print(L2)
+    pulalinha
+    print(L3)
+    pulalinha
+    print(L4)
+    pulalinha
+    print(L5)
+    pulalinha
+    print(L6)
+    pulalinha
+    print(L7)
+    pulalinha
+    pulalinha
+    
+    j jogos  
+
+	  
 
        
                                           
