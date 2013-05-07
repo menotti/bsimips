@@ -1,3 +1,4 @@
+# Esboco do jogo Bulls and Cows. 
 # Bull: Digito certo no local certo. Cow: Digito certo no local errado.
 # Cada registrador de $s0 a $s3 contera um digito da senha secreta, sendo $s0 o digito mais significativo
 # Cada registrador de $s4 a $s7 contera um digito do palpite, sendo $s4 o digito mais significativo
@@ -5,14 +6,14 @@
 # Registradores $a* e $v* serao utilizados na troca de informacoes nas syscalls e nos procedimentos
 
 
-#INTERFACE GRÁFICA
-# A utilização do bitmap display para o jogo Bulls and Cows será feita utilizando o endereço do ponteiro global para enviar informações.
+#INTERFACE GRAFICA
+# A utilizacao do bitmap display para o jogo Bulls and Cows sera feita utilizando o endereco do ponteiro global para enviar informacoes.
 # Para configurar o ambiente utilize 16 unit pixels para Largura e Altura, configure o bitmap display para 256 largura x 512 altura.
 # Altere o base address for display para 0x10008000 ($gp)
 # Conecte com o MIPS e execute o programa
-# Cada linha tem 64 de tamanho, sendo que cada "pixel" tem 4 de tamanho, então são 16 "pixeis" utilizáveis por linha
-# Serão utilizados os registradores $s6 e $s7 para cor de fundo e cor mutável duranto o jogo (Como esses registradores serão utilizados durante o jogo para armazenar os dados da senha mudarei o da cor mutável para t5)
-# Para manipular a localização no display serão utilizados os registradores a0...a3 na inicialização da tela e durante o jogo somente os registradores a2 e a3
+# Cada linha tem 64 de tamanho, sendo que cada "pixel" tem 4 de tamanho, entao sao 16 "pixeis" utilizaveis por linha
+# Serao utilizados os registradores $s6 e $s7 para cor de fundo e cor mutavel duranto o jogo (Como esses registradores serao utilizados durante o jogo para armazenar os dados da senha mudarei o da cor mutavel para t5)
+# Para manipular a localizacao no display serao utilizados os registradores a0...a3 na inicializacao da tela e durante o jogo somente os registradores a2 e a3
 
 .data
 	explicacao: .asciiz "Objetivo: Descobrir uma senha de 4 digitos.\nBull: Digito certo na posicao certa.\nCow: Digito certo na posicao errada.\n\n"
@@ -21,11 +22,11 @@
 	qtdeCows: .asciiz ",  Cows: "
 	venceu: .asciiz "Parabens, voce venceu!"
 	placar: .asciiz "Pontuacao: "
-	falhou: .asciiz "O máximo de tentativas é de 11 rodadas."
+	falhou: .asciiz "O maximo de tentativas eh de 11 rodadas."
 	
 
 	Largura:		.half 16			# Armazena a altura e largura da tela para colorir
-	Altura:			.half 32			# Utiliza o global pointer ($gp) do bitmap display com a configuração 256x512 com 8 unidades cada pixel
+	Altura:			.half 32			# Utiliza o global pointer ($gp) do bitmap display com a configuracao 256x512 com 8 unidades cada pixel
 		
 	CorPrincipal:		.word 0x00000000		# Cor para titulo e bordas - preto
 	Cor1:			.word 0x00AA0000		# Cor 1 - vermelho
@@ -35,11 +36,11 @@
 	Cor5:			.word 0x0000FFFF		# Cor 5 - azul claro
 	Cor6:			.word 0x00FF8900		# Cor 6 - laranja
 	Fundo:			.word 0xFFC2C2C2		# Cor do fundo da tela - cinza
-
+	Pontuacao:		.word 0x100101e0
+	
 .text
 
-main:
-	# inicialização dos gráficos antes de iniciar o jogo
+main:	# inicializadao dos graficos antes de iniciar o jogo
 	# Carrega Cores Iniciais
 	lw $s6, CorPrincipal		# Armazena cor de desenho principal em s6
 	lw $s7, Fundo			# Armazena cor do fundo em s7
@@ -50,10 +51,14 @@ main:
 	nop
 	jal Finalizar_tela
 	nop
-	# Fim da inicialização gráfica da tela, jogo inicia a partir daqui, registradores usados na inicialização da tela e no jogo estao agora livres par ao jogo
+	# Fim da inicializacao grafica da tela, jogo inicia a partir daqui, registradores usados na inicializacao da tela e no jogo estao agora livres par ao jogo
 
-	#inicialização do placar - ALTERACAO BRUNA - troquei o placar do registrador $t0 para $k0, pois $t0 já armazena os Bulls
-	ori $k0, $0, 110		# joga o valor 110 (placar maximo = 100) para t0 (na primeira tentativa ele sera decrementado e ira para 100)
+	#inicializacao do placar - ALTERACAO BRUNA - troquei o placar do registrador $t0 para $k0, pois $t0 ja armazena os Bulls --- OOPS! $k* são usados pelo MARS OS
+	# ori $k0, $0, 110		# joga o valor 110 (placar maximo = 100) para t0 (na primeira tentativa ele sera decrementado e ira para 100)
+	li $t8, 110
+	lw $t9, Pontuacao
+	sw $t8, ($t9)
+
 	# Apresenta a explicacao do jogo.
 	la $a0, explicacao		# Salva o endereco da string em $a0, para impressao
 	li $v0, 4			# Salva o valor 4 em $v0, indicando impressao de uma string
@@ -64,7 +69,14 @@ main:
 	
 	tentativa:
 	# Acerto do placar para valor inicial ficar 100 e diminuir 10 a cada tentativa
-	subi $k0, $k0, 10 #subtrai 10 de cada tentativa
+	# subi $k0, $k0, 10 #subtrai 10 de cada tentativa
+
+	lw $t9, Pontuacao
+	lw $t8, ($t9)
+	subi $t8, $t8, 10 #subtrai 10 de cada tentativa
+	sw $t8, ($t9)
+
+		
 	# Leitura da tentativa
 	jal leTentativa
 	move $a0, $v0			# Copia o endereco do inteiro lido para $a0.
@@ -72,12 +84,12 @@ main:
 	# Distribui cada digito para um registrador. Ex.: 1235 -> $s4=1, $s5=2, $s6=3, $s7=5
 	jal distDigitos
 	
-	# Imprime as cores da tentativa atual na tela e já prepara os valores dos registradores para a próxima impressão
+	# Imprime as cores da tentativa atual na tela e ja prepara os valores dos registradores para a proxima impressao
 	jal ImprimeCoresTentativa
 	
 	
-	# Pontuação sendo 100 pontos máximos
-	# MODIFICADO POR ANDRÉ -> ori $t0, $0, 100 #BRUNO TENTATIVA NÃO PODE FICAR AQUI POIS ELE VOLTARA PARA 100 SEMPRE QUE A FUNÇÃO TENTATIVA FOR CHAMADA, VOU MUDAR PARA CIMA
+	# Pontuacao sendo 100 pontos maximos
+	# MODIFICADO POR ANDRE -> ori $t0, $0, 100 #BRUNO TENTATIVA NAO PODE FICAR AQUI POIS ELE VOLTARA PARA 100 SEMPRE QUE A FUNCAO TENTATIVA FOR CHAMADA, VOU MUDAR PARA CIMA
 	
 	# Compara o palpite com a senha secreta
 	jal compara
@@ -106,12 +118,12 @@ Preencher:
 		
 		or $a1, $zero, $gp		# a1 aponta para ponteiro global (gp)
 Preencher_l:	
-		sw $s7, ($a1)			# Armazena a cor no endereço de memoria
+		sw $s7, ($a1)			# Armazena a cor no endereco de memoria
 		add $a1, $a1, 4			# Faz o offset para encaixar na tela
-		blt $a1, $a2, Preencher_l	# Condicional para repetir preenchimento até chegar no final
+		blt $a1, $a2, Preencher_l	# Condicional para repetir preenchimento ate chegar no final
 		nop
 		
-		jr $ra				# Retorna para endereço de retorno
+		jr $ra				# Retorna para endereco de retorno
 		nop
 
 
@@ -122,9 +134,9 @@ Bordas:
 		add $a2, $a1, $gp		# Adiciona o ponteiro global (gp)
 		or $a1, $zero, $gp		# a1 aponta para ponteiro global (gp)
 Bordas_topo:	
-		sw $s6, ($a1)			# Armazena a cor no endereço de memoria
+		sw $s6, ($a1)			# Armazena a cor no endereco de memoria
 		add $a1, $a1, 4			# Faz o offset para encaixar na tela
-		blt $a1, $a2, Bordas_topo	# Condicional para repetir preenchimento até chegar no final
+		blt $a1, $a2, Bordas_topo	# Condicional para repetir preenchimento ate chegar no final
 		nop
 		lh $a1, Largura			# Carrega valores de altura e largura em a2 e a1
 		lh $a2, Altura
@@ -138,11 +150,11 @@ Bordas_topo:
 		sll $a3, $a1, 2			# Faz o offset para encaixar na tela
 		or $a1, $zero, $gp		# a1 aponta para ponteiro global (gp)
 Bordas_lados:	
-		sw $s6, ($a1)			# Armazena a cor no endereço de memoria
+		sw $s6, ($a1)			# Armazena a cor no endereco de memoria
 		add $a1, $a1, $a3		# Soma a1 mais o Offset calculado
-		sw $s6, ($a1)			# Armazena a cor no endereço de memoria
+		sw $s6, ($a1)			# Armazena a cor no endereco de memoria
 		add $a1, $a1, 4			# Faz o offset para encaixar na tela
-		blt $a1, $a2, Bordas_lados	# Condicional para repetir preenchimento até chegar no final
+		blt $a1, $a2, Bordas_lados	# Condicional para repetir preenchimento ate chegar no final
 		nop
 		or $a3, $zero, $a1		# Guarda o valor atual de a1 (posicao mais baixa da tela) em a3
 		lh $a1, Largura			# Carrega valores de altura e largura em a2 e a1
@@ -152,92 +164,92 @@ Bordas_lados:
 		mflo $a2			# Recupera o total de "pixels"
 		sll $a2, $a2, 2			# Offset para acertar na tela
 		add $a2, $a2, $gp		# Adiciona o ponteiro global (gp)
-		or $a1, $zero, $a3		# Restaura o endereço da posição mais baixa da tela guardad anteriormente em a3
+		or $a1, $zero, $a3		# Restaura o endereco da posicao mais baixa da tela guardad anteriormente em a3
 Bordas_baixo:
-		sw $s6, ($a1)			# Armazena a cor no endereço de memoria
+		sw $s6, ($a1)			# Armazena a cor no endereco de memoria
 		add $a1, $a1, 4			# Faz o offset para encaixar na tela
-		blt $a1, $a2, Bordas_baixo	# Condicional para repetir preenchimento até chegar no final
+		blt $a1, $a2, Bordas_baixo	# Condicional para repetir preenchimento ate chegar no final
 		nop
-		subi $a1, $a1, 192		# Reposiciona a posição 4 linhas acima para desenhar barra preta de fundo
+		subi $a1, $a1, 192		# Reposiciona a posicao 4 linhas acima para desenhar barra preta de fundo
 Barra_adicional:
-		sw $s6, ($a1)			# Armazena a cor no endereço de memoria
+		sw $s6, ($a1)			# Armazena a cor no endereco de memoria
 		add $a1, $a1, 4			# Faz o offset para encaixar na tela
-		blt $a1, $a2, Barra_adicional	# Condicional para repetir preenchimento até chegar no final
+		blt $a1, $a2, Barra_adicional	# Condicional para repetir preenchimento ate chegar no final
 		nop
-		jr $ra				# Retorna para endereço de retorno
+		jr $ra				# Retorna para endereco de retorno
 		nop
 Finalizar_tela:		
 		or $a1, $zero, $a3		# Recupera em a1 o valor de baixo da tela guardado em a3
-		subi $a1, $a1, 64		# Sobe 3 linhas da posição mais abaixo
-		addi $a1, $a1, 8		# Avança 2 "pixels" para frente para desenhar a primeira cor
+		subi $a1, $a1, 64		# Sobe 3 linhas da posicao mais abaixo
+		addi $a1, $a1, 8		# Avanca 2 "pixels" para frente para desenhar a primeira cor
 		lw $t5, Cor1			# Carrega cor em t5
-		sw $t5, ($a1)			# Armazena a cor no endereço de memoria
-		addi $a1, $a1, 8		# Avança 2 "pixels" para frente para desenhar a primeira cor
+		sw $t5, ($a1)			# Armazena a cor no endereco de memoria
+		addi $a1, $a1, 8		# Avanca 2 "pixels" para frente para desenhar a primeira cor
 		lw $t5, Cor2			# Carrega cor em t5
-		sw $t5, ($a1)			# Armazena a cor no endereço de memoria
-		addi $a1, $a1, 8		# Avança 2 "pixels" para frente para desenhar a primeira cor
+		sw $t5, ($a1)			# Armazena a cor no endereco de memoria
+		addi $a1, $a1, 8		# Avanca 2 "pixels" para frente para desenhar a primeira cor
 		lw $t5, Cor3			# Carrega cor em t5
-		sw $t5, ($a1)			# Armazena a cor no endereço de memoria
-		addi $a1, $a1, 8		# Avança 2 "pixels" para frente para desenhar a primeira cor
+		sw $t5, ($a1)			# Armazena a cor no endereco de memoria
+		addi $a1, $a1, 8		# Avanca 2 "pixels" para frente para desenhar a primeira cor
 		lw $t5, Cor4			# Carrega cor em t5
-		sw $t5, ($a1)			# Armazena a cor no endereço de memoria
-		addi $a1, $a1, 8		# Avança 2 "pixels" para frente para desenhar a primeira cor
+		sw $t5, ($a1)			# Armazena a cor no endereco de memoria
+		addi $a1, $a1, 8		# Avanca 2 "pixels" para frente para desenhar a primeira cor
 		lw $t5, Cor5			# Carrega cor em t5
-		sw $t5, ($a1)			# Armazena a cor no endereço de memoria
-		addi $a1, $a1, 8		# Avança 2 "pixels" para frente para desenhar a primeira cor
+		sw $t5, ($a1)			# Armazena a cor no endereco de memoria
+		addi $a1, $a1, 8		# Avanca 2 "pixels" para frente para desenhar a primeira cor
 		lw $t5, Cor6			# Carrega cor em t5
-		sw $t5, ($a1)			# Armazena a cor no endereço de memoria
+		sw $t5, ($a1)			# Armazena a cor no endereco de memoria
 		
-		subi $a3, $a3, 256		# Atualiza valor de a3 para se posicionar 4 linhas acima para iniciar a impressão das cores do usuario
-		or $a2, $zero, $a3		# guarda o endereço da posição da primeira linha do jogo que está em a3 para o registrador a2
-		jr $ra				# Retorna para endereço de retorno
+		subi $a3, $a3, 256		# Atualiza valor de a3 para se posicionar 4 linhas acima para iniciar a impressao das cores do usuario
+		or $a2, $zero, $a3		# guarda o endereco da posicao da primeira linha do jogo que esta em a3 para o registrador a2
+		jr $ra				# Retorna para endereco de retorno
 		nop
 
 	
 # Procedimento para imprimir as cores das 4 tentativas na tela e posicionar o cursor duas linhas cima para proxima impressao
 ImprimeCoresTentativa:
-		or $t4, $zero, $ra		# backup do endereço de retorno em t4 para voltar para o programa depois
-		or $a2, $zero, $a3		# backup da posição de a3 em a2
+		or $t4, $zero, $ra		# backup do endereco de retorno em t4 para voltar para o programa depois
+		or $a2, $zero, $a3		# backup da posicao de a3 em a2
 		Digito1:
 		addi $a3, $a3, 12
-		beq $s4, 1, Selecionacor11	# condicional para verirficar o numero da cor e selecionar
-		beq $s4, 2, Selecionacor12	# condicional para verirficar o numero da cor e selecionar
-		beq $s4, 3, Selecionacor13	# condicional para verirficar o numero da cor e selecionar
-		beq $s4, 4, Selecionacor14	# condicional para verirficar o numero da cor e selecionar
-		beq $s4, 5, Selecionacor15	# condicional para verirficar o numero da cor e selecionar
-		beq $s4, 6, Selecionacor16	# condicional para verirficar o numero da cor e selecionar
+		beq $s4, 1, Selecionacor11	# condicional para verificar o numero da cor e selecionar
+		beq $s4, 2, Selecionacor12	# condicional para verificar o numero da cor e selecionar
+		beq $s4, 3, Selecionacor13	# condicional para verificar o numero da cor e selecionar
+		beq $s4, 4, Selecionacor14	# condicional para verificar o numero da cor e selecionar
+		beq $s4, 5, Selecionacor15	# condicional para verificar o numero da cor e selecionar
+		beq $s4, 6, Selecionacor16	# condicional para verificar o numero da cor e selecionar
 		Selecionacor10:
 		lw $t5, CorPrincipal		# carrega cor preta para emergencia da cor selecionada nao for de 1 a 6
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito2
 		Selecionacor11:
 		lw $t5, Cor1			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito2			# Pula para a cor do proximo digito
 		nop
 		Selecionacor12:
 		lw $t5, Cor2			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito2			# Pula para a cor do proximo digito
 		nop		
 		Selecionacor13:
 		lw $t5, Cor3			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito2			# Pula para a cor do proximo digito
 		nop		
 		Selecionacor14:
 		lw $t5, Cor4			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito2			# Pula para a cor do proximo digito
 		nop		
 		Selecionacor15:
 		lw $t5, Cor5			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito2			# Pula para a cor do proximo digito
 		nop		
 		Selecionacor16:
 		lw $t5, Cor6			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito2			# Pula para a cor do proximo digito
 		nop
 		Digito2:
@@ -250,36 +262,36 @@ ImprimeCoresTentativa:
 		beq $s5, 6, Selecionacor26	# condicional para verirficar o numero da cor e selecionar
 		Selecionacor20:
 		lw $t5, CorPrincipal		# carrega cor preta para emergencia da cor selecionada nao for de 1 a 6
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito3
 		Selecionacor21:
 		lw $t5, Cor1			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito3			# Pula para a cor do proximo digito
 		nop
 		Selecionacor22:
 		lw $t5, Cor2			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito3			# Pula para a cor do proximo digito
 		nop		
 		Selecionacor23:
 		lw $t5, Cor3			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito3			# Pula para a cor do proximo digito
 		nop		
 		Selecionacor24:
 		lw $t5, Cor4			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito3			# Pula para a cor do proximo digito
 		nop		
 		Selecionacor25:
 		lw $t5, Cor5			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito3			# Pula para a cor do proximo digito
 		nop		
 		Selecionacor26:
 		lw $t5, Cor6			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito3			# Pula para a cor do proximo digito
 		nop
 		Digito3:
@@ -292,36 +304,36 @@ ImprimeCoresTentativa:
 		beq $s6, 6, Selecionacor36	# condicional para verirficar o numero da cor e selecionar
 		Selecionacor30:
 		lw $t5, CorPrincipal		# carrega cor preta para emergencia da cor selecionada nao for de 1 a 6
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito4
 		Selecionacor31:
 		lw $t5, Cor1			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito4			# Pula para a cor do proximo digito
 		nop
 		Selecionacor32:
 		lw $t5, Cor2			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito4			# Pula para a cor do proximo digito
 		nop		
 		Selecionacor33:
 		lw $t5, Cor3			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito4			# Pula para a cor do proximo digito
 		nop		
 		Selecionacor34:
 		lw $t5, Cor4			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito4			# Pula para a cor do proximo digito
 		nop		
 		Selecionacor35:
 		lw $t5, Cor5			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito4			# Pula para a cor do proximo digito
 		nop		
 		Selecionacor36:
 		lw $t5, Cor6			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Digito4			# Pula para a cor do proximo digito
 		nop
 		Digito4:
@@ -334,46 +346,46 @@ ImprimeCoresTentativa:
 		beq $s7, 6, Selecionacor46	# condicional para verirficar o numero da cor e selecionar
 		Selecionacor40:
 		lw $t5, CorPrincipal		# carrega cor preta para emergencia da cor selecionada nao for de 1 a 6
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Finaliza_impressao
 		Selecionacor41:
 		lw $t5, Cor1			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Finaliza_impressao		# Pula para a finalizacao da impressao de cores
 		nop
 		Selecionacor42:
 		lw $t5, Cor2			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Finaliza_impressao		# Pula para a finalizacao da impressao de cores
 		nop		
 		Selecionacor43:
 		lw $t5, Cor3			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Finaliza_impressao		# Pula para a finalizacao da impressao de cores
 		nop		
 		Selecionacor44:
 		lw $t5, Cor4			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Finaliza_impressao		# Pula para a finalizacao da impressao de cores
 		nop		
 		Selecionacor45:
 		lw $t5, Cor5			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Finaliza_impressao		# Pula para a finalizacao da impressao de cores
 		nop		
 		Selecionacor46:
 		lw $t5, Cor6			# Carrega cor em t5
-		sw $t5, ($a3)			# Exibe a cor na tela na posição indicada
+		sw $t5, ($a3)			# Exibe a cor na tela na posicao indicada
 		j Finaliza_impressao		# Pula para a finalizacao da impressao de cores
 		nop
 		Finaliza_impressao:
 		or $a3, $zero, $a2		#retorna o valor de a3 que estava salvo em a2
 		subi $a3, $a3, 128		# subtrai 128 de a3 fazendo com que ele retorne 2 linhas para a proxima tentativa
-		or $ra, $zero, $t4		# retornando o backup do endereço de retorno que estava em t4 para voltar para o programa
-		jr $ra				# Retorna para endereço de retorno
+		or $ra, $zero, $t4		# retornando o backup do endereco de retorno que estava em t4 para voltar para o programa
+		jr $ra				# Retorna para endereco de retorno
 		nop
 
-# Fim das operações do bitmap display
+# Fim das operacoes do bitmap display
 ########################################################################################################################################
 
 
@@ -494,7 +506,7 @@ compara:
 	bne $t0, 4, limite
 	la $a0, venceu			# Salva o endereco da string em $a0, para impressao
 	li $v0, 4			# Salva o valor 4 em $v0, indicando impressao de uma string
-	beq $t0, $0, feedback		# mostrar pontuação do jogo
+	beq $t0, $0, feedback		# mostrar pontuacao do jogo
 	syscall				# Imprime a string na tela
 	
 	# Imprime na tela o placar
@@ -502,8 +514,12 @@ compara:
 	la $a0, placar			# Salva o endereco da string em $a0, para impressao
 	li $v0, 4			# Salva o valor 4 em $v0, indicando impressao de uma string
 	syscall				# Imprime a string na tela
-	
-	add $a0, $0, $k0		# Salva a pontuacao em $a0, para impressao
+
+	lw $t9, Pontuacao
+	lw $t8, ($t9)
+	add $a0, $0, $t8		# Salva a pontuacao em $a0, para impressao
+	sw $t8, ($t9)
+		
 	li $v0, 1			# Salva o valor 1 em $v0, indicando impressao de um inteiro
 	syscall				# Imprime o inteiro na tela
 	
@@ -513,10 +529,13 @@ compara:
 	# Valida limite de tentativas
 	limite:
 	
-	bnez $k0, feedback		# Se o placar chegou a zero, as tentativas se esgotaram e o placar é impresso.
+	lw $t9, Pontuacao
+	lw $t8, ($t9)
+	bnez $t8, feedback		# Se o placar chegou a zero, as tentativas se esgotaram e o placar eh impresso.
+	sw $t8, ($t9)
 	la $a0, falhou			# Salva o endereco da string em $a0, para impressao
 	li $v0, 4			# Salva o valor 4 em $v0, indicando impressao de uma string
-	beq $t0, $0, feedback		# mostrar pontuação do jogo
+	beq $t0, $0, feedback		# mostrar pontuacao do jogo
 	syscall				# Imprime a string na tela
 	
 	li $v0, 1			# Sinaliza que esta foi a ultima rodada
