@@ -1,4 +1,3 @@
-# Esboco do jogo Bulls and Cows. 
 # Bull: Digito certo no local certo. Cow: Digito certo no local errado.
 # Cada registrador de $s0 a $s3 contera um digito da senha secreta, sendo $s0 o digito mais significativo
 # Cada registrador de $s4 a $s7 contera um digito do palpite, sendo $s4 o digito mais significativo
