@@ -1,0 +1,1 @@
+Exemplos de programa em assembly do MIPS desenvolvidos no curso de Bacharelado em Sistemas de Informação da Universidade Federal de São Carlos
